@@ -58,6 +58,15 @@ test('carrying and borrowing only appear on levels 3 and 5', () => {
   }
 });
 
+test('calculations carry one emoji for their counting objects', () => {
+  for (const level of LEVELS) {
+    each('mixed', level, ({ prompt }) => {
+      assert.equal(typeof prompt.emoji, 'string');
+      assert.ok(prompt.emoji.length > 0);
+    });
+  }
+});
+
 test('mixed challenge uses both operations', () => {
   const ops = new Set();
   each('mixed', 3, ({ prompt }) => ops.add(prompt.op));

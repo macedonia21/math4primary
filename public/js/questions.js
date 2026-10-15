@@ -66,7 +66,7 @@ function makeChoices(answer, min, max, level, rng) {
 function addQuestion(level, rng) {
   const [a, b] = addends(level, rng);
   return {
-    prompt: { type: 'expr', a, op: '+', b },
+    prompt: { type: 'expr', a, op: '+', b, emoji: pick(rng, EMOJI) },
     answer: a + b,
     choices: makeChoices(a + b, 0, MAX_BY_LEVEL[level], level, rng),
   };
@@ -76,7 +76,7 @@ function addQuestion(level, rng) {
 function subQuestion(level, rng) {
   const [answer, b] = shuffle(rng, addends(level, rng));
   return {
-    prompt: { type: 'expr', a: answer + b, op: '-', b },
+    prompt: { type: 'expr', a: answer + b, op: '-', b, emoji: pick(rng, EMOJI) },
     answer,
     choices: makeChoices(answer, 0, MAX_BY_LEVEL[level], level, rng),
   };

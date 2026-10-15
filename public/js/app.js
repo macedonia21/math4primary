@@ -1,5 +1,5 @@
 import {
-  makeQuestion, starsForScore, ACTIVITIES, LEVELS, QUESTIONS_PER_ROUND,
+  makeQuestion, starsForScore, ACTIVITIES, LEVELS, QUESTIONS_PER_ROUND, MAX_BY_LEVEL,
 } from './questions.js';
 import { STRINGS } from './i18n.js';
 import { load, save } from './storage.js';
@@ -71,8 +71,10 @@ function levelsScreen() {
 
 function promptHtml(prompt) {
   switch (prompt.type) {
-    case 'expr':
-      return `<div class="expr">${prompt.a} ${prompt.op === '+' ? '+' : '−'} ${prompt.b} = <span class="blank">?</span></div>`;
+    case 'expr': {
+      const expr = `<div class="expr">${prompt.a} ${prompt.op === '+' ? '+' : '−'} ${prompt.b} = <span class="blank">?</span></div>`;
+      return MAX_BY_LEVEL[state.level] <= 20 ? expr + countingAid(prompt) : expr;
+    }
     case 'count': {
       const objects = `<span>${prompt.emoji}</span>`.repeat(prompt.n);
       return `<p class="ask">${t().howMany}</p><div class="objects ${prompt.n > 10 ? 'many' : ''}">${objects}</div>`;
@@ -86,6 +88,25 @@ function promptHtml(prompt) {
       return `<p class="ask">${t().missing}</p><div class="sequence">${items}</div>`;
     }
   }
+}
+
+// n objects in rows of 5; the last `crossed` of them are shown as taken away.
+function pile(n, emoji, crossed = 0) {
+  const rows = [];
+  for (let start = 0; start < n; start += 5) {
+    const row = Array.from({ length: Math.min(5, n - start) }, (_, i) => (
+      start + i >= n - crossed ? `<span class="gone">${emoji}</span>` : `<span>${emoji}</span>`
+    ));
+    rows.push(`<div class="five">${row.join('')}</div>`);
+  }
+  return `<div class="pile">${rows.join('')}</div>`;
+}
+
+function countingAid({ a, op, b, emoji }) {
+  const content = op === '+'
+    ? `${pile(a, emoji)}<span class="aid-sign">+</span>${pile(b, emoji)}`
+    : pile(a, emoji, b);
+  return `<div class="counting-aid" aria-hidden="true">${content}</div>`;
 }
 
 function playScreen() {
@@ -132,10 +153,12 @@ function render() {
 // ---------- game flow ----------
 
 function newQuestion() {
-  const previous = JSON.stringify(state.question?.prompt);
+  // The same sum with a different emoji still counts as a repeat.
+  const key = (question) => JSON.stringify({ ...question?.prompt, emoji: undefined });
+  const previous = key(state.question);
   do {
     state.question = makeQuestion(state.activity, state.level);
-  } while (JSON.stringify(state.question.prompt) === previous);
+  } while (key(state.question) === previous);
 }
 
 function startRound(level) {
