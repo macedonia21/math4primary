@@ -1,0 +1,14 @@
+{
+  "name": "math4primary",
+  "version": "1.0.0",
+  "description": "Colourful math practice website for primary school children",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
