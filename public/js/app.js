@@ -186,7 +186,9 @@ function answer(button) {
   const blank = app.querySelector('.blank');
   if (blank) blank.textContent = q.answer;
   playSound(isRight);
-  nextTimer = setTimeout(nextQuestion, isRight ? 1200 : 2200);
+  const aid = app.querySelector('.counting-aid');
+  if (aid) animateAid(aid, q.prompt.op);
+  nextTimer = setTimeout(nextQuestion, (isRight ? 1200 : 2200) + (aid ? 1000 : 0));
 }
 
 function nextQuestion() {
@@ -230,6 +232,37 @@ function playSound(isRight) {
     osc.connect(gain).connect(audio.destination);
     osc.start(start);
     osc.stop(start + 0.25);
+  });
+}
+
+// Shows the answer with the objects: addition merges both piles into one,
+// subtraction sends the crossed-out objects flying away.
+function animateAid(aid, op) {
+  const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1;
+  if (op === '+') {
+    const before = [...aid.querySelectorAll('.five span')].map((el) => el.getBoundingClientRect());
+    aid.innerHTML = pile(before.length, aid.querySelector('.five span').textContent);
+    // FLIP: start each object where it was, then let it slide to its place in the merged pile.
+    aid.querySelectorAll('.five span').forEach((el, i) => {
+      const after = el.getBoundingClientRect();
+      el.animate(
+        [{ transform: `translate(${before[i].left - after.left}px, ${before[i].top - after.top}px)` }, { transform: 'none' }],
+        { duration: 700 * duration, delay: i * 20 * duration, easing: 'ease-in-out', fill: 'backwards' },
+      );
+    });
+    return;
+  }
+  const gone = [...aid.querySelectorAll('.gone')];
+  const flights = gone.map((el, i) => el.animate(
+    [
+      { transform: 'none', opacity: 0.35 },
+      { transform: `translate(${(Math.random() - 0.5) * 120}px, -140px) rotate(${(Math.random() - 0.5) * 120}deg)`, opacity: 0 },
+    ],
+    { duration: 600 * duration, delay: i * 60 * duration, easing: 'ease-in', fill: 'forwards' },
+  ).finished);
+  Promise.all(flights).then(() => {
+    gone.forEach((el) => el.remove());
+    aid.querySelectorAll('.five:empty').forEach((row) => row.remove());
   });
 }
 
