@@ -1,7 +1,11 @@
 // Question generators. Pure functions: pass a custom rng to make them deterministic.
 
-export const ACTIVITIES = ['numbers', 'add', 'sub', 'mixed'];
+export const ACTIVITIES = ['numbers', 'add', 'sub', 'mixed', 'mul'];
 export const LEVELS = [1, 2, 3, 4, 5];
+// Times tables: levels 1–8 are the tables of 2–9, level 9 mixes them all.
+export const TABLE_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+export const levelsFor = (activity) => (activity === 'mul' ? TABLE_LEVELS : LEVELS);
+export const tableFor = (level) => (level <= 8 ? level + 1 : null);
 export const QUESTIONS_PER_ROUND = 10;
 export const MAX_BY_LEVEL = { 1: 10, 2: 20, 3: 20, 4: 100, 5: 100 };
 
@@ -82,6 +86,21 @@ function subQuestion(level, rng) {
   };
 }
 
+// a × b follows the Vietnamese textbook reading: "a taken b times".
+function mulQuestion(level, rng) {
+  const a = tableFor(level) ?? int(rng, 2, 9);
+  const b = int(rng, 1, 10);
+  const answer = a * b;
+  // Neighbouring answers in the same table are the mistakes children really make.
+  const pool = [...new Set([a * (b - 1), a * (b + 1), a * (b - 2), a * (b + 2), answer - 1, answer + 1])]
+    .filter((v) => v > 0 && v !== answer);
+  return {
+    prompt: { type: 'expr', a, op: '×', b, emoji: pick(rng, EMOJI) },
+    answer,
+    choices: shuffle(rng, [answer, ...shuffle(rng, pool).slice(0, 3)]),
+  };
+}
+
 function countQuestion(max, level, rng) {
   const n = int(rng, 1, max);
   return {
@@ -133,6 +152,7 @@ export function makeQuestion(activity, level, rng = Math.random) {
     case 'numbers': return numbersQuestion(level, rng);
     case 'add': return addQuestion(level, rng);
     case 'sub': return subQuestion(level, rng);
+    case 'mul': return mulQuestion(level, rng);
     default: return rng() < 0.5 ? addQuestion(level, rng) : subQuestion(level, rng);
   }
 }

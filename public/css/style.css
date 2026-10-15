@@ -13,6 +13,7 @@
 .add     { --c: #2bb673; --c-dark: #1b8552; }
 .sub     { --c: #ff4d8d; --c-dark: #c2256a; }
 .mixed   { --c: #8e54e9; --c-dark: #6431b8; }
+.mul     { --c: #1e88e5; --c-dark: #1259a6; }
 
 * { box-sizing: border-box; }
 
@@ -115,8 +116,9 @@ main {
 
 .cards {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 24px;
   margin-top: 12px;
 }
@@ -127,6 +129,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 4px;
+  flex: 0 1 calc(50% - 12px);
   min-height: clamp(170px, 30vh, 260px);
   padding: 20px 12px;
   color: var(--white);
@@ -254,6 +257,52 @@ main {
 
 .aid-sign { font-weight: 800; color: var(--c); font-size: 1.4em; }
 
+/* times tables: one dashed box per group */
+.groups-aid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  font-size: clamp(18px, 3.4vw, 30px);
+  line-height: 1.2;
+}
+
+.groups-aid.many { font-size: clamp(14px, 2.4vw, 22px); }
+
+.group-box {
+  padding: 4px 6px;
+  border: 3px dashed var(--c);
+  border-radius: 16px;
+}
+
+.group-box .pile { gap: 2px; }
+.group-box .five { padding: 0 4px; }
+
+/* times table screen */
+.times-table {
+  width: 100%;
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(10, auto);
+  gap: 4px 40px;
+  padding: 16px 24px;
+  background: var(--white);
+  border-radius: 32px;
+  border: 6px solid var(--c);
+  box-shadow: 0 8px 0 var(--c-dark);
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 800;
+}
+
+.tt-row { display: grid; grid-template-columns: auto auto 1fr; gap: 12px; align-items: baseline; white-space: nowrap; }
+.tt-row:nth-child(odd) { color: var(--c-dark); }
+.tt-eq { color: #8a97b8; }
+.tt-row b { color: var(--c); }
+
+.table-view .big-btn { width: 100%; max-width: 520px; }
+
 .ask { margin: 0; font-size: clamp(28px, 5vw, 44px); text-align: center; }
 .ask.big { font-size: clamp(40px, 8vw, 76px); font-weight: 800; line-height: 1.15; }
 
@@ -366,8 +415,9 @@ main {
 /* ---------- wide screens ---------- */
 
 @media (min-width: 800px) {
-  .cards { grid-template-columns: repeat(4, 1fr); }
+  .card { flex-basis: calc(33.333% - 16px); }
   .choices.count-4 { grid-template-columns: repeat(4, 1fr); }
+  .times-table { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, auto); }
 }
 
 @media (max-width: 600px) {

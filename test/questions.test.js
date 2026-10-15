@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  makeQuestion, starsForScore, ACTIVITIES, LEVELS, MAX_BY_LEVEL,
+  makeQuestion, starsForScore, ACTIVITIES, LEVELS, MAX_BY_LEVEL, levelsFor, tableFor,
 } from '../public/js/questions.js';
 
 const RUNS = 500;
@@ -11,7 +11,7 @@ const each = (activity, level, fn) => {
 const carries = (a, b) => (a % 10) + (b % 10) >= 10;
 
 test('every question has unique choices that include the answer', () => {
-  for (const activity of ACTIVITIES) {
+  for (const activity of ACTIVITIES.filter((a) => a !== 'mul')) {
     for (const level of LEVELS) {
       each(activity, level, (q) => {
         assert.ok(q.choices.includes(q.answer));
@@ -92,6 +92,24 @@ test('number questions match their prompt', () => {
         assert.equal(prompt.items.filter((v) => v === null).length, 1);
       }
     });
+  }
+});
+
+test('times tables ask the chosen table, 1 to 10', () => {
+  for (const level of levelsFor('mul')) {
+    const tables = new Set();
+    each('mul', level, ({ prompt, answer, choices }) => {
+      assert.equal(prompt.op, '×');
+      assert.equal(prompt.a * prompt.b, answer);
+      assert.ok(prompt.b >= 1 && prompt.b <= 10);
+      if (tableFor(level)) assert.equal(prompt.a, tableFor(level));
+      tables.add(prompt.a);
+      assert.equal(choices.length, 4);
+      assert.equal(new Set(choices).size, 4);
+      assert.ok(choices.includes(answer));
+      assert.ok(choices.every((c) => c > 0));
+    });
+    if (!tableFor(level)) assert.deepEqual([...tables].sort(), [2, 3, 4, 5, 6, 7, 8, 9]);
   }
 });
 

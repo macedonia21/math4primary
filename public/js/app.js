@@ -1,10 +1,11 @@
 import {
-  makeQuestion, starsForScore, ACTIVITIES, LEVELS, QUESTIONS_PER_ROUND, MAX_BY_LEVEL,
+  makeQuestion, starsForScore, ACTIVITIES, QUESTIONS_PER_ROUND, MAX_BY_LEVEL, levelsFor, tableFor,
 } from './questions.js';
 import { STRINGS } from './i18n.js';
 import { load, save } from './storage.js';
 
-const ICONS = { numbers: '🔢', add: '➕', sub: '➖', mixed: '🎯' };
+const ICONS = { numbers: '🔢', add: '➕', sub: '➖', mixed: '🎯', mul: '✖️' };
+const OPS = { '+': '+', '-': '−', '×': '×' };
 const CONFETTI = ['🎉', '⭐', '✨', '🎈', '🌟'];
 
 const app = document.getElementById('app');
@@ -16,7 +17,9 @@ let audio = null;
 const t = () => STRINGS[data.lang];
 const randomOf = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const starsFor = (activity, level) => data.stars[activity]?.[level] ?? 0;
-const isUnlocked = (activity, level) => level === 1 || starsFor(activity, level - 1) > 0;
+// Every times table is open: children may be learning any of them at school.
+const isUnlocked = (activity, level) => activity === 'mul' || level === 1 || starsFor(activity, level - 1) > 0;
+const levelLabel = (activity, level) => (activity === 'mul' ? tableFor(level) ?? '🎲' : level);
 const starRow = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 
 function totalStars() {
@@ -52,11 +55,11 @@ function homeScreen() {
 
 function levelsScreen() {
   const { activity } = state;
-  const buttons = LEVELS.map((level) => {
+  const buttons = levelsFor(activity).map((level) => {
     const open = isUnlocked(activity, level);
     return `
       <button class="level" data-action="level" data-level="${level}" ${open ? '' : `disabled aria-label="${t().locked}"`}>
-        <span class="level-number">${open ? level : '🔒'}</span>
+        <span class="level-number">${open ? levelLabel(activity, level) : '🔒'}</span>
         <span class="level-name">${t().levelNames[activity][level - 1]}</span>
         <span class="level-stars">${starRow(starsFor(activity, level))}</span>
       </button>`;
@@ -72,7 +75,8 @@ function levelsScreen() {
 function promptHtml(prompt) {
   switch (prompt.type) {
     case 'expr': {
-      const expr = `<div class="expr">${prompt.a} ${prompt.op === '+' ? '+' : '−'} ${prompt.b} = <span class="blank">?</span></div>`;
+      const expr = `<div class="expr">${prompt.a} ${OPS[prompt.op]} ${prompt.b} = <span class="blank">?</span></div>`;
+      if (prompt.op === '×') return expr + groupsAid(prompt);
       return MAX_BY_LEVEL[state.level] <= 20 ? expr + countingAid(prompt) : expr;
     }
     case 'count': {
@@ -109,6 +113,24 @@ function countingAid({ a, op, b, emoji }) {
   return `<div class="counting-aid" aria-hidden="true">${content}</div>`;
 }
 
+// a × b = "a taken b times": b boxes holding a objects each (still in rows of 5).
+function groupsAid({ a, b, emoji }) {
+  const box = `<div class="group-box">${pile(a, emoji)}</div>`;
+  return `<div class="groups-aid ${a * b > 40 ? 'many' : ''}" aria-hidden="true">${box.repeat(b)}</div>`;
+}
+
+function tableScreen() {
+  const n = tableFor(state.level);
+  const rows = Array.from({ length: 10 }, (_, i) => `
+    <div class="tt-row"><span>${n} × ${i + 1}</span><span class="tt-eq">=</span><b>${n * (i + 1)}</b></div>`).join('');
+  return `
+    <main class="table-view ${state.activity}">
+      <h1>${ICONS.mul} ${t().levelNames.mul[state.level - 1]}</h1>
+      <div class="times-table">${rows}</div>
+      <button class="big-btn primary" data-action="play">▶️ ${t().playNow}</button>
+    </main>`;
+}
+
 function playScreen() {
   const q = state.question;
   const choices = q.choices
@@ -127,7 +149,8 @@ function playScreen() {
 
 function resultsScreen() {
   const stars = starsForScore(state.correct);
-  const canGoNext = stars > 0 && state.level < LEVELS.length;
+  const canGoNext = stars > 0 && state.level < levelsFor(state.activity).length;
+  const hasTable = tableFor(state.level) && state.activity === 'mul';
   const score = t().score.replace('{n}', state.correct).replace('{total}', QUESTIONS_PER_ROUND);
   return `
     <main class="results ${state.activity}">
@@ -137,12 +160,15 @@ function resultsScreen() {
       <div class="result-actions">
         ${canGoNext ? `<button class="big-btn primary" data-action="next-level">${t().nextLevel} ➡️</button>` : ''}
         <button class="big-btn" data-action="again">🔁 ${t().playAgain}</button>
+        ${hasTable ? `<button class="big-btn" data-action="table">📖 ${t().viewTable}</button>` : ''}
         <button class="big-btn" data-action="levels">${t().levels}</button>
       </div>
     </main>`;
 }
 
-const SCREENS = { home: homeScreen, levels: levelsScreen, play: playScreen, results: resultsScreen };
+const SCREENS = {
+  home: homeScreen, levels: levelsScreen, table: tableScreen, play: playScreen, results: resultsScreen,
+};
 
 function render() {
   document.documentElement.lang = data.lang;
@@ -165,6 +191,16 @@ function startRound(level) {
   Object.assign(state, { screen: 'play', level, index: 0, correct: 0, question: null });
   newQuestion();
   render();
+}
+
+// A single times table is shown in full before playing it.
+function openLevel(level) {
+  if (state.activity === 'mul' && tableFor(level)) {
+    state.level = level;
+    go('table');
+  } else {
+    startRound(level);
+  }
 }
 
 function answer(button) {
@@ -310,10 +346,12 @@ const ACTIONS = {
   home: () => go('home'),
   levels: () => go('levels'),
   activity: (el) => { state.activity = el.dataset.activity; go('levels'); },
-  level: (el) => startRound(Number(el.dataset.level)),
+  level: (el) => openLevel(Number(el.dataset.level)),
   answer,
   again: () => startRound(state.level),
-  'next-level': () => startRound(state.level + 1),
+  'next-level': () => openLevel(state.level + 1),
+  table: () => go('table'),
+  play: () => startRound(state.level),
   mute: () => { data.muted = !data.muted; save(data); render(); },
   lang: () => { data.lang = data.lang === 'vi' ? 'en' : 'vi'; save(data); render(); },
 };

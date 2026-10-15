@@ -12,8 +12,9 @@ A colourful math practice website for primary school children, in Vietnamese and
 | ➕ Addition | Sums within 10, 20 and 100 |
 | ➖ Subtraction | Differences within 10, 20 and 100 (never below zero) |
 | 🎯 Challenge | Addition and subtraction mixed together |
+| ✖️ Times Tables | Multiplication tables of 2 to 9 |
 
-Each activity has 5 levels:
+The first four activities have 5 levels each:
 
 | Level | Addition / Subtraction / Challenge | Learn Numbers |
 |---|---|---|
@@ -22,6 +23,14 @@ Each activity has 5 levels:
 | 3 | Within 20, with carrying/borrowing | Missing number up to 20 |
 | 4 | Within 100, no carrying/borrowing | Compare numbers up to 100 |
 | 5 | Within 100, with carrying/borrowing | Missing number up to 100 |
+
+### Times tables
+
+The Times Tables activity has 9 levels: one for each table from 2 to 9, plus one that mixes all tables. All of them are open from the start, since children may be learning any table at school.
+
+- Choosing a table first shows the whole table (3 × 1 = 3 … 3 × 10 = 30) in big numbers, with a **Play now** button. The results screen has a **See the table** button to review it again.
+- Questions follow the Vietnamese textbook reading of `a × b`: "a taken b times". So 3 × 4 shows **4 dashed boxes with 3 objects each**, and objects inside a box are still in rows of 5.
+- Wrong answer choices are the neighbouring answers in the same table (e.g. 24 and 30 for 3 × 9), the mistakes children make most often.
 
 ### Counting objects in groups of 5
 
