@@ -238,7 +238,7 @@ function playSound(isRight) {
 // Shows the answer with the objects: addition merges both piles into one,
 // subtraction sends the crossed-out objects flying away.
 function animateAid(aid, op) {
-  const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1;
+  // Plays even with reduced motion on: the movement is the lesson, not decoration.
   if (op === '+') {
     // Full groups of five move as whole groups; only the loose objects
     // gather into new groups of five.
@@ -265,14 +265,14 @@ function animateAid(aid, op) {
       const to = el.getBoundingClientRect();
       el.animate(
         [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
-        { duration: 600 * duration, delay: delay * duration, easing: 'ease-in-out', fill: 'backwards' },
+        { duration: 600, delay, easing: 'ease-in-out', fill: 'backwards' },
       );
     };
     full.forEach((row) => slide(row, 0));
     loose.forEach((el, i) => slide(el, 500 + i * 60));
     newRows.forEach((row) => row.animate(
       [{ backgroundColor: 'rgba(238, 246, 255, 0)' }, { backgroundColor: 'rgba(238, 246, 255, 1)' }],
-      { duration: 400 * duration, delay: (500 + loose.length * 60) * duration, fill: 'backwards' },
+      { duration: 400, delay: 500 + loose.length * 60, fill: 'backwards' },
     ));
     return;
   }
@@ -282,7 +282,7 @@ function animateAid(aid, op) {
       { transform: 'none', opacity: 0.35 },
       { transform: `translate(${(Math.random() - 0.5) * 120}px, -140px) rotate(${(Math.random() - 0.5) * 120}deg)`, opacity: 0 },
     ],
-    { duration: 600 * duration, delay: i * 60 * duration, easing: 'ease-in', fill: 'forwards' },
+    { duration: 600, delay: i * 60, easing: 'ease-in', fill: 'forwards' },
   ).finished);
   Promise.all(flights).then(() => {
     gone.forEach((el) => el.remove());

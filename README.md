@@ -30,7 +30,7 @@ On levels 1–3 (numbers up to 20), each calculation shows objects underneath so
 - **Addition** (e.g. 8 + 9) shows two piles of the same object. After the child answers, the full groups of 5 slide together as whole groups, then the loose objects gather into a new group of 5 plus any leftover: `[5][3] + [5][4]` becomes `[5][5][5][2]`.
 - **Subtraction** (e.g. 16 − 8) shows one pile with the objects being taken away crossed out. After the child answers, the crossed-out objects fly away and fade, leaving the answer in groups of 5.
 
-The animation plays after both right and wrong answers, so it also shows why the answer is correct. If the device is set to reduce motion, the objects jump straight to the result. Levels 4–5 (up to 100) show the calculation only.
+The animation plays after both right and wrong answers, so it also shows why the answer is correct. It plays even when the device is set to reduce motion, because the movement is part of the lesson; decorative motion (confetti, drifting clouds, button pops) still follows that setting. Levels 4–5 (up to 100) show the calculation only.
 
 ### Rounds and stars
 
