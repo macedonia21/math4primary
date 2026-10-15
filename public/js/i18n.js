@@ -1,3 +1,5 @@
+import { TABLE_ORDER } from './questions.js';
+
 const MATH_LEVELS_VI = [
   'Trong phạm vi 10',
   'Trong phạm vi 20',
@@ -25,7 +27,7 @@ export const STRINGS = {
       add: MATH_LEVELS_VI,
       sub: MATH_LEVELS_VI,
       mixed: MATH_LEVELS_VI,
-      mul: [2, 3, 4, 5, 6, 7, 8, 9].map((n) => `Bảng nhân ${n}`).concat('Trộn tất cả các bảng'),
+      mul: TABLE_ORDER.map((n) => `Bảng nhân ${n}`).concat('Trộn tất cả các bảng'),
     },
     howMany: 'Có bao nhiêu?',
     bigger: 'Số nào lớn hơn?',
@@ -55,7 +57,7 @@ export const STRINGS = {
       add: MATH_LEVELS_EN,
       sub: MATH_LEVELS_EN,
       mixed: MATH_LEVELS_EN,
-      mul: [2, 3, 4, 5, 6, 7, 8, 9].map((n) => `Table of ${n}`).concat('All tables mixed'),
+      mul: TABLE_ORDER.map((n) => `Table of ${n}`).concat('All tables mixed'),
     },
     howMany: 'How many?',
     bigger: 'Which number is bigger?',

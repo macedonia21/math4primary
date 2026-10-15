@@ -12,7 +12,7 @@ A colourful math practice website for primary school children, in Vietnamese and
 | ➕ Addition | Sums within 10, 20 and 100 |
 | ➖ Subtraction | Differences within 10, 20 and 100 (never below zero) |
 | 🎯 Challenge | Addition and subtraction mixed together |
-| ✖️ Times Tables | Multiplication tables of 2 to 9 |
+| ✖️ Times Tables | Multiplication tables of 2 to 10 |
 
 The first four activities have 5 levels each:
 
@@ -26,10 +26,13 @@ The first four activities have 5 levels each:
 
 ### Times tables
 
-The Times Tables activity has 9 levels: one for each table from 2 to 9, plus one that mixes all tables. All of them are open from the start, since children may be learning any table at school.
+The Times Tables activity has 10 levels: one for each table, plus one that mixes all tables. All of them are open from the start, since children may be learning any table at school.
+
+The tables are listed easiest first: **2, 5, 10, 9, 4, 3, 6, 8, 7**. The 2s are doubling, the 5s end in 0 or 5, the 10s add a 0, the 9s have a pattern (9 × 7 = 63: the tens digit is one less than 7, and the digits add to 9), and the 4s, 6s and 8s are doubles of the 2s, 3s and 4s. The 7s come last because by then swapping the order already gives every 7 fact except 7 × 7 and 7 × 8.
 
 - Choosing a table first shows the whole table (3 × 1 = 3 … 3 × 10 = 30) in big numbers, with a **Play now** button. The results screen has a **See the table** button to review it again.
 - Questions follow the Vietnamese textbook reading of `a × b`: "a taken b times". So 3 × 4 shows **4 dashed boxes with 3 objects each**, and objects inside a box are still in rows of 5.
+- **Swap hint:** after the child answers 3 × 7, the 7 boxes of 3 regroup into 3 boxes of 7. Each new box takes one object from every old box (rows become columns), then the line under the sum shows `3 × 7 = 7 × 3 = 21`. This shows that every fact learned also gives its swapped fact for free. It is skipped when both numbers are the same (4 × 4).
 - Wrong answer choices are the neighbouring answers in the same table (e.g. 24 and 30 for 3 × 9), the mistakes children make most often.
 
 ### Counting objects in groups of 5

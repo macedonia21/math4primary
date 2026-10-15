@@ -109,8 +109,12 @@ test('times tables ask the chosen table, 1 to 10', () => {
       assert.ok(choices.includes(answer));
       assert.ok(choices.every((c) => c > 0));
     });
-    if (!tableFor(level)) assert.deepEqual([...tables].sort(), [2, 3, 4, 5, 6, 7, 8, 9]);
+    if (!tableFor(level)) assert.deepEqual([...tables].sort((x, y) => x - y), [2, 3, 4, 5, 6, 7, 8, 9, 10]);
   }
+});
+
+test('times tables run easiest first, then all mixed', () => {
+  assert.deepEqual(levelsFor('mul').map(tableFor), [2, 5, 10, 9, 4, 3, 6, 8, 7, null]);
 });
 
 test('stars follow the score', () => {

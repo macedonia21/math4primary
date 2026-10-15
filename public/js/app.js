@@ -222,9 +222,18 @@ function answer(button) {
   const blank = app.querySelector('.blank');
   if (blank) blank.textContent = q.answer;
   playSound(isRight);
+  let wait = isRight ? 1200 : 2200;
   const aid = app.querySelector('.counting-aid');
-  if (aid) animateAid(aid, q.prompt.op);
-  nextTimer = setTimeout(nextQuestion, (isRight ? 1200 : 2200) + (aid ? 1300 : 0));
+  if (aid) {
+    animateAid(aid, q.prompt.op);
+    wait += 1300;
+  }
+  const groups = app.querySelector('.groups-aid');
+  if (groups && q.prompt.a !== q.prompt.b) {
+    const done = swapGroups(groups, q.prompt, feedback);
+    wait = Math.max(wait, done + 1600);
+  }
+  nextTimer = setTimeout(nextQuestion, wait);
 }
 
 function nextQuestion() {
@@ -324,6 +333,55 @@ function animateAid(aid, op) {
     gone.forEach((el) => el.remove());
     aid.querySelectorAll('.five:empty').forEach((row) => row.remove());
   });
+}
+
+// Swap hint for a × b: the b boxes of a regroup into a boxes of b. Each new
+// box takes one object from every old box (rows become columns), then the
+// feedback line shows a × b = b × a. Returns when the animation ends, in ms.
+function swapGroups(aid, { a, b }, feedback) {
+  const oldBoxes = [...aid.querySelectorAll('.group-box')].map((box) => [...box.querySelectorAll('span')]);
+  const start = new Map(oldBoxes.flat().map((el) => [el, el.getBoundingClientRect()]));
+
+  const newBoxes = Array.from({ length: a }, (_, i) => {
+    const objects = oldBoxes.map((box) => box[i]);
+    const pileEl = document.createElement('div');
+    pileEl.className = 'pile';
+    for (let s = 0; s < objects.length; s += 5) {
+      const row = document.createElement('div');
+      row.className = 'five';
+      row.append(...objects.slice(s, s + 5));
+      pileEl.append(row);
+    }
+    const box = document.createElement('div');
+    box.className = 'group-box';
+    box.append(pileEl);
+    return box;
+  });
+  aid.replaceChildren(...newBoxes);
+
+  const begin = 600;
+  const end = begin + 700 + (a - 1) * 80;
+  newBoxes.forEach((box, j) => {
+    box.querySelectorAll('span').forEach((el) => {
+      const from = start.get(el);
+      const to = el.getBoundingClientRect();
+      el.animate(
+        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+        { duration: 700, delay: begin + j * 80, easing: 'ease-in-out', fill: 'backwards' },
+      );
+    });
+    box.animate(
+      [{ borderColor: 'transparent' }, { borderColor: getComputedStyle(box).borderColor }],
+      { duration: 300, delay: begin + j * 80 + 500, fill: 'backwards' },
+    );
+  });
+
+  setTimeout(() => {
+    if (!feedback.isConnected) return;
+    feedback.textContent = `${a} × ${b} = ${b} × ${a} = ${a * b}`;
+    feedback.className = 'feedback swap-hint';
+  }, end);
+  return end;
 }
 
 function confetti() {

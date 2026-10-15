@@ -341,6 +341,7 @@ main {
 }
 
 .feedback.good { color: #0b6b34; animation: pop 0.4s; }
+.feedback.swap-hint { color: var(--c-dark); animation: pop 0.4s; }
 
 .choices { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 

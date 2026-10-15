@@ -2,10 +2,13 @@
 
 export const ACTIVITIES = ['numbers', 'add', 'sub', 'mixed', 'mul'];
 export const LEVELS = [1, 2, 3, 4, 5];
-// Times tables: levels 1–8 are the tables of 2–9, level 9 mixes them all.
-export const TABLE_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// Times tables, easiest first. The 7s come last: by then swapping the order
+// (7 × 3 = 3 × 7) already covers all but 7 × 7 and 7 × 8.
+export const TABLE_ORDER = [2, 5, 10, 9, 4, 3, 6, 8, 7];
+// One level per table, then a last level that mixes them all.
+export const TABLE_LEVELS = [...TABLE_ORDER.keys(), TABLE_ORDER.length].map((i) => i + 1);
 export const levelsFor = (activity) => (activity === 'mul' ? TABLE_LEVELS : LEVELS);
-export const tableFor = (level) => (level <= 8 ? level + 1 : null);
+export const tableFor = (level) => TABLE_ORDER[level - 1] ?? null;
 export const QUESTIONS_PER_ROUND = 10;
 export const MAX_BY_LEVEL = { 1: 10, 2: 20, 3: 20, 4: 100, 5: 100 };
 
@@ -88,7 +91,7 @@ function subQuestion(level, rng) {
 
 // a × b follows the Vietnamese textbook reading: "a taken b times".
 function mulQuestion(level, rng) {
-  const a = tableFor(level) ?? int(rng, 2, 9);
+  const a = tableFor(level) ?? pick(rng, TABLE_ORDER);
   const b = int(rng, 1, 10);
   const answer = a * b;
   // Neighbouring answers in the same table are the mistakes children really make.
