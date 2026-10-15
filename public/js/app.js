@@ -188,7 +188,7 @@ function answer(button) {
   playSound(isRight);
   const aid = app.querySelector('.counting-aid');
   if (aid) animateAid(aid, q.prompt.op);
-  nextTimer = setTimeout(nextQuestion, (isRight ? 1200 : 2200) + (aid ? 1000 : 0));
+  nextTimer = setTimeout(nextQuestion, (isRight ? 1200 : 2200) + (aid ? 1300 : 0));
 }
 
 function nextQuestion() {
@@ -240,16 +240,40 @@ function playSound(isRight) {
 function animateAid(aid, op) {
   const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1;
   if (op === '+') {
-    const before = [...aid.querySelectorAll('.five span')].map((el) => el.getBoundingClientRect());
-    aid.innerHTML = pile(before.length, aid.querySelector('.five span').textContent);
-    // FLIP: start each object where it was, then let it slide to its place in the merged pile.
-    aid.querySelectorAll('.five span').forEach((el, i) => {
-      const after = el.getBoundingClientRect();
+    // Full groups of five move as whole groups; only the loose objects
+    // gather into new groups of five.
+    const rows = [...aid.querySelectorAll('.five')];
+    const full = rows.filter((row) => row.children.length === 5);
+    const loose = rows.filter((row) => row.children.length < 5).flatMap((row) => [...row.children]);
+    const start = new Map([...full, ...loose].map((el) => [el, el.getBoundingClientRect()]));
+
+    const newRows = [];
+    for (let i = 0; i < loose.length; i += 5) {
+      const row = document.createElement('div');
+      row.className = 'five';
+      row.append(...loose.slice(i, i + 5));
+      newRows.push(row);
+    }
+    const merged = document.createElement('div');
+    merged.className = 'pile';
+    merged.append(...full, ...newRows);
+    aid.replaceChildren(merged);
+
+    // FLIP: start each piece where it was, then slide it to its new place.
+    const slide = (el, delay) => {
+      const from = start.get(el);
+      const to = el.getBoundingClientRect();
       el.animate(
-        [{ transform: `translate(${before[i].left - after.left}px, ${before[i].top - after.top}px)` }, { transform: 'none' }],
-        { duration: 700 * duration, delay: i * 20 * duration, easing: 'ease-in-out', fill: 'backwards' },
+        [{ transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` }, { transform: 'none' }],
+        { duration: 600 * duration, delay: delay * duration, easing: 'ease-in-out', fill: 'backwards' },
       );
-    });
+    };
+    full.forEach((row) => slide(row, 0));
+    loose.forEach((el, i) => slide(el, 500 + i * 60));
+    newRows.forEach((row) => row.animate(
+      [{ backgroundColor: 'rgba(238, 246, 255, 0)' }, { backgroundColor: 'rgba(238, 246, 255, 1)' }],
+      { duration: 400 * duration, delay: (500 + loose.length * 60) * duration, fill: 'backwards' },
+    ));
     return;
   }
   const gone = [...aid.querySelectorAll('.gone')];
