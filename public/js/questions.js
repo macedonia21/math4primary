@@ -41,8 +41,8 @@ function addends(level, rng) {
       const a = int(rng, 2, 9);
       return [a, int(rng, 11 - a, 9)];
     }
-    case 4: { // within 100: whole tens (30 + 40) or no carrying (52 + 6)
-      if (rng() < 0.5) {
+    case 4: { // within 100: mostly no carrying (52 + 6), sometimes whole tens (30 + 40)
+      if (rng() < 0.2) {
         const tens = int(rng, 1, 9);
         return [tens * 10, int(rng, 1, 10 - tens) * 10];
       }
@@ -148,6 +148,33 @@ function numbersQuestion(level, rng) {
     case 4: return compareQuestion(100, rng);
     default: return sequenceQuestion(100, [1, 2, 5, 10], level, rng);
   }
+}
+
+// Two questions count as the same if a child would see them as the same:
+// the emoji doesn't matter, 3 + 5 equals 5 + 3, and "bigger or smaller?"
+// is the same question for the same pair of numbers.
+export function questionKey({ prompt, choices }) {
+  const { emoji, want, ...rest } = prompt;
+  if (rest.op === '+' && rest.a > rest.b) [rest.a, rest.b] = [rest.b, rest.a];
+  if (rest.type === 'compare') rest.pair = [...choices].sort((x, y) => x - y);
+  return JSON.stringify(rest);
+}
+
+// A round of questions with no repeats. Small levels (e.g. one times table
+// has exactly 10 facts) can still be filled because each slot keeps trying.
+export function makeRound(activity, level, rng = Math.random) {
+  const seen = new Set();
+  const round = [];
+  while (round.length < QUESTIONS_PER_ROUND) {
+    let question;
+    for (let tries = 0; tries < 300; tries++) {
+      question = makeQuestion(activity, level, rng);
+      if (!seen.has(questionKey(question))) break;
+    }
+    seen.add(questionKey(question));
+    round.push(question);
+  }
+  return round;
 }
 
 export function makeQuestion(activity, level, rng = Math.random) {

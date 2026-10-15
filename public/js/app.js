@@ -1,5 +1,5 @@
 import {
-  makeQuestion, starsForScore, ACTIVITIES, QUESTIONS_PER_ROUND, MAX_BY_LEVEL, levelsFor, tableFor,
+  makeRound, starsForScore, ACTIVITIES, QUESTIONS_PER_ROUND, MAX_BY_LEVEL, levelsFor, tableFor,
 } from './questions.js';
 import { STRINGS } from './i18n.js';
 import { load, save } from './storage.js';
@@ -178,18 +178,9 @@ function render() {
 
 // ---------- game flow ----------
 
-function newQuestion() {
-  // The same sum with a different emoji still counts as a repeat.
-  const key = (question) => JSON.stringify({ ...question?.prompt, emoji: undefined });
-  const previous = key(state.question);
-  do {
-    state.question = makeQuestion(state.activity, state.level);
-  } while (key(state.question) === previous);
-}
-
 function startRound(level) {
-  Object.assign(state, { screen: 'play', level, index: 0, correct: 0, question: null });
-  newQuestion();
+  const round = makeRound(state.activity, level);
+  Object.assign(state, { screen: 'play', level, index: 0, correct: 0, round, question: round[0] });
   render();
 }
 
@@ -240,7 +231,7 @@ function nextQuestion() {
   nextTimer = null;
   state.index++;
   if (state.index < QUESTIONS_PER_ROUND) {
-    newQuestion();
+    state.question = state.round[state.index];
   } else {
     const stars = starsForScore(state.correct);
     if (stars > starsFor(state.activity, state.level)) {

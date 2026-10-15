@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  makeQuestion, starsForScore, ACTIVITIES, LEVELS, MAX_BY_LEVEL, levelsFor, tableFor,
+  makeQuestion, makeRound, questionKey, starsForScore, ACTIVITIES, LEVELS, MAX_BY_LEVEL, levelsFor, tableFor,
 } from '../public/js/questions.js';
 
 const RUNS = 500;
@@ -115,6 +115,30 @@ test('times tables ask the chosen table, 1 to 10', () => {
 
 test('times tables run easiest first, then all mixed', () => {
   assert.deepEqual(levelsFor('mul').map(tableFor), [2, 5, 10, 9, 4, 3, 6, 8, 7, null]);
+});
+
+test('a round never repeats a question', () => {
+  for (const activity of ACTIVITIES) {
+    for (const level of levelsFor(activity)) {
+      for (let i = 0; i < 30; i++) {
+        const round = makeRound(activity, level);
+        assert.equal(round.length, 10);
+        const keys = round.map(questionKey);
+        assert.equal(new Set(keys).size, 10, `${activity} L${level}: ${keys.join(' ')}`);
+      }
+    }
+  }
+});
+
+test('3 + 5 and 5 + 3 count as the same question', () => {
+  const q = (a, b) => ({ prompt: { type: 'expr', a, op: '+', b, emoji: '🍎' }, choices: [] });
+  assert.equal(questionKey(q(3, 5)), questionKey(q(5, 3)));
+});
+
+test('whole-tens sums are only a small share of level 4', () => {
+  let tens = 0;
+  each('add', 4, ({ prompt }) => { if (prompt.a % 10 === 0 && prompt.b % 10 === 0) tens++; });
+  assert.ok(tens / RUNS < 0.3, `${tens} of ${RUNS}`);
 });
 
 test('stars follow the score', () => {
