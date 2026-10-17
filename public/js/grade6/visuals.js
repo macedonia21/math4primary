@@ -73,6 +73,38 @@ export function dots({ rows, cols, splitAt = null, isNew = false }) {
     ${`<div class="vx-dot-row">${row}</div>`.repeat(rows)}</div>`;
 }
 
+// Rows of number chips (e.g. divisors of two numbers); numbers in `common`
+// are highlighted when showCommon is on. newRow marks the row just revealed.
+export function chipRows({ rows, common = [], showCommon = false, newRow = -1 }) {
+  return `<div class="vx-chiprows">${rows.map(({ label, items }, r) => `
+    <div class="vx-chiprow${fresh(r === newRow)}"><span class="vx-chiprow-label">${label}</span>
+      ${items.map((v) => `<span class="vx-chip${showCommon && common.includes(v) ? ' common' : ''}">${v}</span>`).join('')}
+    </div>`).join('')}</div>`;
+}
+
+// Sieve of Eratosthenes on 1..max: crossed numbers are struck out, primes
+// circled; `fresh` lists numbers crossed or circled in this step.
+export function sieve({ max = 50, crossed = [], primes = [], fresh: newOnes = [] }) {
+  const cells = Array.from({ length: max }, (_, i) => {
+    const n = i + 1;
+    const cls = crossed.includes(n) ? ' crossed' : primes.includes(n) ? ' prime' : '';
+    return `<span class="vx-cell${cls}${newOnes.includes(n) ? ' new' : ''}">${n}</span>`;
+  });
+  return `<div class="vx-sieve">${cells.join('')}</div>`;
+}
+
+// Prime factorisation by repeated division (number | prime), first k rows.
+export function divisionColumn({ n, k }) {
+  const rows = [];
+  let m = n;
+  for (let p = 2; m > 1;) {
+    if (m % p === 0) { rows.push([m, p]); m /= p; } else p++;
+  }
+  rows.push([1, '']);
+  return `<div class="vx-divcol">${rows.slice(0, k).map(([v, p], i) => `
+    <div class="vx-divrow${fresh(i === k - 1)}"><span>${v}</span><span>${p}</span></div>`).join('')}</div>`;
+}
+
 // total objects, optionally sorted into boxes of `size` with the remainder apart.
 export function groups({ total, size, emoji, grouped, isNew = false }) {
   const item = `<span>${emoji}</span>`;

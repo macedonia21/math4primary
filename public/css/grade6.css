@@ -145,6 +145,29 @@
 .cells { display: inline-flex; flex-wrap: wrap; gap: 3px; max-width: 220px; vertical-align: middle; margin: 0 8px; }
 .cells i { width: 10px; height: 10px; border-radius: 50%; background: #2bb673; }
 
+/* chapter II pictures */
+.vx-chiprows { display: flex; flex-direction: column; gap: 10px; }
+.vx-chiprow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.vx-chiprow-label { min-width: 72px; font-size: 20px; font-weight: 800; color: var(--c-dark); }
+.vx-chiprow .vx-chip { background: #e4e8f2; transition: background 0.3s; }
+.vx-chiprow .vx-chip.common { color: var(--white); background: #2bb673; }
+
+.vx-sieve { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; width: min(100%, 460px); }
+.vx-cell { position: relative; display: grid; place-items: center; aspect-ratio: 1; font-size: 17px; font-weight: 800; background: #eef1ff; border-radius: 8px; }
+.vx-cell.crossed { color: #a3abc7; background: #f4f5f9; }
+.vx-cell.crossed::after { content: ''; position: absolute; left: 15%; right: 15%; top: 50%; border-top: 3px solid #e53950; transform: rotate(-35deg); }
+.vx-cell.prime { color: var(--white); background: var(--c); border-radius: 50%; }
+
+.vx-divcol { display: inline-flex; flex-direction: column; font-size: clamp(22px, 3vw, 28px); font-weight: 800; }
+.vx-divrow { display: grid; grid-template-columns: 80px 56px; }
+.vx-divrow span:first-child { padding-right: 12px; text-align: right; border-right: 4px solid var(--ink); }
+.vx-divrow span:last-child { padding-left: 12px; color: #b85c00; }
+
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 3px; font-size: 0.85em; line-height: 1.15; }
+.frac > span:last-child { border-top: 2px solid currentColor; padding-top: 1px; }
+.ndiv { position: relative; display: inline-block; }
+.ndiv::after { content: ''; position: absolute; left: 50%; top: 50%; width: 0.85em; margin-left: -0.425em; border-top: 2px solid currentColor; transform: rotate(-60deg); }
+
 /* practice */
 .g6-play .question.g6q {
   display: block;
@@ -191,4 +214,6 @@
   .vx-chip { width: 40px; height: 40px; font-size: 21px; }
   .vx-dot { width: 14px; height: 14px; }
   .vx-dot-row, .vx-dots { gap: 4px; }
+  .vx-sieve { gap: 3px; }
+  .vx-cell { font-size: 13px; line-height: 1; }
 }

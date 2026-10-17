@@ -104,6 +104,35 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('chapters II–V are listed, waiting for lessons', () => {
+test('chapters I and II have all their lessons; III–V are listed', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V']);
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+});
+
+test('chapter II answers agree with brute-force counting', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  const nums = (q) => q.text.en.replace(/<[^>]+>/g, ' ').match(/\d+/g).map(Number);
+  const slowGcd = (...xs) => { for (let d = Math.min(...xs); ; d--) if (xs.every((x) => x % d === 0)) return d; };
+  const slowLcm = (...xs) => { for (let m = Math.max(...xs); ; m++) if (xs.every((x) => m % x === 0)) return m; };
+  const isPrimeSlow = (n) => n > 1 && [...Array(n).keys()].slice(2).every((d) => n % d);
+  for (let i = 0; i < 200; i++) {
+    let q = lesson('c2b11').exercises[0]();
+    assert.equal(q.answer, slowGcd(...nums(q)), q.text.en);
+    q = lesson('c2b11').exercises[4]();
+    assert.equal(q.answer, slowGcd(...nums(q)), q.text.en);
+    q = lesson('c2b12').exercises[0]();
+    assert.equal(q.answer, slowLcm(...nums(q)), q.text.en);
+    q = lesson('c2b12').exercises[1]();
+    assert.equal(q.answer, slowLcm(...nums(q)), q.text.en);
+    q = lesson('c2b10').exercises[3]();
+    const [below] = nums(q);
+    assert.equal(q.answer, [...Array(below).keys()].filter(isPrimeSlow).length, q.text.en);
+    q = lesson('c2b8').advanced[0]();
+    const [c] = nums(q);
+    assert.equal(q.answer, [...Array(c + 1).keys()].slice(1).filter((n) => (n + c) % n === 0).length, q.text.en);
+    q = lesson('c2b12').advanced[0]();
+    const [lo, hi, a, b, cc] = nums(q);
+    const fits = [...Array(hi - lo + 1).keys()].map((k) => lo + k).filter((n) => n % a === 0 && n % b === 0 && n % cc === 0);
+    assert.deepEqual(fits, [q.answer], q.text.en);
+  }
 });

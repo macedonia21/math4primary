@@ -36,6 +36,42 @@ export function fmt(n, L) {
 export const setOf = (items, L) => `{${items.join(L === 'vi' ? '; ' : ', ')}}`;
 export const pw = (a, n) => `${a}<sup>${n}</sup>`;
 
+// ---------- number theory (Chapter II) ----------
+
+export const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+export const lcm = (a, b) => (a / gcd(a, b)) * b;
+export const divisors = (n) => Array.from({ length: n }, (_, i) => i + 1).filter((d) => n % d === 0);
+export const isPrime = (n) => n > 1 && divisors(n).length === 2;
+export const primesBelow = (n) => Array.from({ length: n }, (_, i) => i).filter(isPrime);
+
+// 360 → [[2, 3], [3, 2], [5, 1]]
+export function factorize(n) {
+  const out = [];
+  for (let p = 2; n > 1; p++) {
+    let e = 0;
+    while (n % p === 0) { n /= p; e++; }
+    if (e) out.push([p, e]);
+  }
+  return out;
+}
+
+// [[2, 3], [3, 2], [5, 1]] → 2³ · 3² · 5
+export const factorHtml = (factors) => factors.map(([p, e]) => (e === 1 ? `${p}` : pw(p, e))).join(' · ');
+
+// A stacked fraction.
+export const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+
+// "is divisible by" / "is not divisible by"
+export const DIV = '⋮';
+export const NDIV = '<span class="ndiv">⋮</span>';
+
+// Set names: Vietnamese textbooks write Ư(12), ƯCLN(12, 18)…; English uses D, M, GCD, LCM.
+const SYMBOLS = {
+  vi: { U: 'Ư', B: 'B', UC: 'ƯC', BC: 'BC', UCLN: 'ƯCLN', BCNN: 'BCNN' },
+  en: { U: 'D', B: 'M', UC: 'CD', BC: 'CM', UCLN: 'GCD', BCNN: 'LCM' },
+};
+export const sym = (L, name) => SYMBOLS[L][name];
+
 // A multiple-choice question. Choices may be plain strings/numbers or { vi, en }.
 export function choice(text, correct, wrongs, explain) {
   return { text, choices: shuffle([correct, ...wrongs]), answer: correct, explain };

@@ -60,7 +60,7 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | Chapter | Status |
 |---|---|
 | I. The set of natural numbers (lessons 1–7) | Done |
-| II. Divisibility in the natural numbers | Coming soon |
+| II. Divisibility in the natural numbers (lessons 8–12) | Done |
 | III. Integers | Coming soon |
 | IV. Plane shapes in real life | Coming soon |
 | V. Symmetry of shapes in nature | Coming soon |
@@ -82,6 +82,11 @@ Each lesson page has:
   | 5. Multiply and divide | Common-factor shortcuts; dividend + divisor known; largest/smallest number with a given remainder |
   | 6. Powers | Last digit of a power; comparing powers like 2³⁰ and 3²⁰; find x inside a power; rewriting 8ᵐ · 4ⁿ as a power of 2 |
   | 7. Order of operations | Long expressions with ( ), [ ] and { }; find x inside an expression; where to put brackets to reach a value |
+  | 8. Divisibility | How many n make (n + c) divisible by n, or by n + 1; two-digit multiples; choosing x so a sum is divisible |
+  | 9. Divisibility rules | Remainder on division by 9 or 3; counting three-digit numbers divisible by 2, 3, 5, 9 together; smallest/largest such four-digit number; two missing digits |
+  | 10. Primes | Two primes with an odd sum; number of divisors from the factorisation; consecutive primes from their product; prime or composite without a calculator |
+  | 11. GCD | Largest divisor leaving given remainders; equal teams of boys and girls; largest square tiles; simplifying large fractions |
+  | 12. LCM | Lining up students exactly or with a remainder; GCD · LCM = product; adding three fractions |
 
 Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
@@ -151,6 +156,8 @@ public/
     index.js          Chapter list and practice rounds
     chapter1.js       Chapter I lessons: theory, examples, exercises
     chapter1Advanced.js  Chapter I challenge (Nâng cao) exercises
+    chapter2.js       Chapter II lessons (divisibility, primes, GCD, LCM)
+    chapter2Advanced.js  Chapter II challenge exercises
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice
     util.js           Bilingual text, number formatting, question builders
