@@ -27,22 +27,78 @@ export function createGrade6({
           <button class="lesson-btn" data-action="g6-lesson" data-id="${l.id}">
             <span class="lesson-num">${g6().lesson} ${l.number}</span>
             <span class="lesson-name">${tr(l.title, L())}</span>
-            <span class="level-stars">${starRow(starsFor(l.id))}</span>
-            ${l.advanced.length ? `<span class="adv-stars" title="${g6().advanced}">🚀${starRow(starsFor(l.id, 'advanced'))}</span>` : ''}
+            <span class="lesson-stars">
+              <span class="level-stars">${starRow(starsFor(l.id))}</span>
+              ${l.advanced.length ? `<span class="adv-stars" title="${g6().advanced}">🚀${starRow(starsFor(l.id, 'advanced'))}</span>` : ''}
+            </span>
           </button>`).join('')
         : `<p class="soon">🚧 ${g6().comingSoon}</p>`;
       return `
-        <section class="chapter">
-          <h2><span class="ch-num">${g6().chapter} ${chapter.number}</span> ${tr(chapter.title, L())}</h2>
-          <div class="lesson-list">${lessons}</div>
-        </section>`;
+        <div class="slide">
+          <section class="chapter">
+            <h2><span class="ch-num">${g6().chapter} ${chapter.number}</span> ${tr(chapter.title, L())}</h2>
+            <div class="lesson-list">${lessons}</div>
+          </section>
+        </div>`;
     }).join('');
+    const current = state.chapterIndex ?? 0;
+    const tabs = CHAPTERS.map((chapter, i) => `
+      <button class="chapter-tab${i === current ? ' active' : ''}" data-action="g6-chapter" data-index="${i}" aria-label="${g6().chapter} ${chapter.number}">${chapter.number}</button>`).join('');
     return `
       <main class="g6">
         <h1>📐 ${t().stages.grade6}</h1>
         <p class="subtitle">${g6().book}</p>
-        ${chapters}
+        <nav class="chapter-tabs">
+          <button class="carousel-arrow" data-action="g6-chapter" data-step="-1" aria-label="${g6().prevChapter}" ${current === 0 ? 'disabled' : ''}>◀</button>
+          ${tabs}
+          <button class="carousel-arrow" data-action="g6-chapter" data-step="1" aria-label="${g6().nextChapter}" ${current === CHAPTERS.length - 1 ? 'disabled' : ''}>▶</button>
+        </nav>
+        <div class="carousel-track">${chapters}</div>
       </main>`;
+  }
+
+  // ---------- chapter carousel ----------
+  // One chapter per slide in a horizontally scrolling track: swipe on touch
+  // screens, or use the chapter tabs, the arrows or the ← → keys.
+
+  const track = () => app.querySelector('.carousel-track');
+
+  function showChapter(index, smooth = true) {
+    const t0 = track();
+    if (!t0) return;
+    state.chapterIndex = Math.max(0, Math.min(CHAPTERS.length - 1, index));
+    t0.scrollTo({ left: state.chapterIndex * t0.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+    markChapter();
+  }
+
+  // Highlight the tab of the visible chapter and enable/disable the arrows.
+  function markChapter() {
+    const i = state.chapterIndex ?? 0;
+    app.querySelectorAll('.chapter-tab').forEach((tab, k) => tab.classList.toggle('active', k === i));
+    const [prev, next] = app.querySelectorAll('.carousel-arrow');
+    prev.disabled = i === 0;
+    next.disabled = i === CHAPTERS.length - 1;
+  }
+
+  // Called after every render: put the track on the remembered chapter and
+  // follow swipes.
+  function afterRender() {
+    if (state.screen !== 'grade6') return;
+    const t0 = track();
+    showChapter(state.chapterIndex ?? 0, false);
+    let settle;
+    t0.addEventListener('scroll', () => {
+      clearTimeout(settle);
+      settle = setTimeout(() => {
+        state.chapterIndex = Math.round(t0.scrollLeft / t0.clientWidth);
+        markChapter();
+      }, 80);
+    });
+  }
+
+  function chapterAction(el) {
+    if (el.dataset.step) showChapter((state.chapterIndex ?? 0) + Number(el.dataset.step));
+    else showChapter(Number(el.dataset.index));
   }
 
   // ---------- lesson ----------
@@ -113,7 +169,9 @@ export function createGrade6({
   }
 
   function openLesson(id) {
-    Object.assign(state, { activity: 'g6', level: id, steps: {} });
+    // Remember the lesson's chapter so "back" returns to the same slide.
+    const chapterIndex = CHAPTERS.findIndex((c) => c.lessons.some((l) => l.id === id));
+    Object.assign(state, { activity: 'g6', level: id, steps: {}, chapterIndex });
     go('lesson');
     window.scrollTo(0, 0);
   }
@@ -263,6 +321,10 @@ export function createGrade6({
 
   // Physical keyboard for typed answers (and Enter to move on).
   function onKey(event) {
+    if (state.screen === 'grade6' && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+      showChapter((state.chapterIndex ?? 0) + (event.key === 'ArrowLeft' ? -1 : 1));
+      return;
+    }
     if (state.screen !== 'g6play') return;
     if (state.answered) {
       if (event.key === 'Enter' && !timer) next();
@@ -279,6 +341,7 @@ export function createGrade6({
     actions: {
       grade6: () => go('grade6'),
       'g6-lesson': (el) => openLesson(el.dataset.id),
+      'g6-chapter': chapterAction,
       'g6-step': step,
       'g6-practice': (el) => startPractice(el.dataset.mode ?? 'basic'),
       'g6-answer': answerChoice,
@@ -286,6 +349,7 @@ export function createGrade6({
       'g6-next': next,
     },
     onKey,
+    afterRender,
     // Re-rendering mid-answer would lose the feedback and explanation.
     busy: () => state.screen === 'g6play' && state.answered,
     stop: () => { clearTimeout(timer); timer = null; },

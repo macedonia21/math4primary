@@ -39,8 +39,40 @@
 .lesson-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #c5ccf5; }
 .lesson-num { flex: none; font-weight: 800; color: var(--c); font-size: 20px; }
 .lesson-name { flex: 1; font-size: clamp(18px, 2.6vw, 24px); line-height: 1.25; }
+.lesson-stars { flex: none; display: flex; align-items: center; gap: 10px; }
 .lesson-btn .level-stars { font-size: 26px; }
 .soon { margin: 0; font-size: 20px; color: #6b7699; }
+
+/* chapter carousel */
+.chapter-tabs { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.chapter-tab, .carousel-arrow {
+  min-width: 52px;
+  height: 52px;
+  padding: 0 12px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--c-dark);
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #b9c1ee;
+}
+.chapter-tab.active { color: var(--white); background: var(--c); box-shadow: 0 4px 0 var(--c-dark); }
+.carousel-arrow:disabled { opacity: 0.35; cursor: default; }
+.chapter-tab:active, .carousel-arrow:not(:disabled):active { transform: translateY(3px); box-shadow: none; }
+
+.carousel-track {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 900px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+.slide { flex: 0 0 100%; padding: 0 12px 12px; scroll-snap-align: start; }
+.slide .chapter { max-width: none; }
 
 /* lesson page */
 .lesson-view { gap: 18px; }
@@ -207,6 +239,13 @@
 
 @media (max-width: 600px) {
   .chapter, .point { padding: 12px 12px 16px; border-radius: 22px; }
+  .chapter-tabs { gap: 5px; }
+  .chapter-tab, .carousel-arrow { min-width: 40px; height: 44px; padding: 0 8px; font-size: 18px; border-radius: 12px; }
+  .slide { padding: 0 2px 12px; }
+  /* lesson buttons: number and name on top, stars on a line below */
+  .lesson-btn { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; padding: 8px 12px; }
+  .lesson-stars { grid-column: 2; }
+  .lesson-btn .level-stars { font-size: 22px; }
   .vx-place th, .vx-place td { min-width: 0; padding: 4px 6px; }
   .vx-derive { font-size: 18px; }
   .vx-line { white-space: normal; }

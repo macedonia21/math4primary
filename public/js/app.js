@@ -212,6 +212,7 @@ function render() {
   document.documentElement.lang = data.lang;
   document.title = t().title;
   app.innerHTML = topbar() + SCREENS[state.screen]();
+  grade6.afterRender();
 }
 
 // ---------- game flow ----------

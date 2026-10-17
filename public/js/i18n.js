@@ -76,6 +76,8 @@ export const STRINGS = {
       advanced: 'Nâng cao',
       tryAdvanced: 'Thử bài nâng cao',
       sign: 'Đổi dấu',
+      prevChapter: 'Chương trước',
+      nextChapter: 'Chương sau',
     },
   },
   en: {
@@ -138,6 +140,8 @@ export const STRINGS = {
       advanced: 'Challenge',
       tryAdvanced: 'Try the challenge',
       sign: 'Change sign',
+      prevChapter: 'Previous chapter',
+      nextChapter: 'Next chapter',
     },
   },
 };

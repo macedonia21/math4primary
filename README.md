@@ -65,6 +65,8 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | IV. Plane shapes in real life | Coming soon |
 | V. Symmetry of shapes in nature | Coming soon |
 
+The chapter list is a carousel showing one chapter at a time: switch with the I–V tabs, the ◀ ▶ arrows, the ← → keys, or by swiping. Coming back from a lesson returns to its chapter.
+
 Each lesson page has:
 
 - **Key ideas** for each main point of the lesson, in short bullet points.
