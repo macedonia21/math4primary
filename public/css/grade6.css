@@ -231,6 +231,20 @@
 .letter { font-family: Arial, Helvetica, sans-serif; font-weight: 700; letter-spacing: 2px; }
 .choice .letter { font-size: 1.4em; }
 
+/* chapter VI: fraction bars and area grids */
+.fbar-row { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 520px; }
+.fbar { flex: 1; display: grid; grid-template-columns: repeat(var(--d), 1fr); height: 30px; border: 3px solid var(--c); border-radius: 8px; overflow: hidden; background: var(--white); }
+.fb-cell { border-right: 2px solid var(--c); }
+.fb-cell:last-child { border-right: 0; }
+.fb-cell.on.a { background: #8fa2ff; }
+.fb-cell.on.b { background: #ffb35c; }
+.fbar-label { min-width: 70px; font-size: 22px; font-weight: 800; }
+.area-grid { display: grid; gap: 3px; width: min(100%, 240px); aspect-ratio: 4 / 3; }
+.area-grid span { background: #eef1ff; border-radius: 3px; }
+.area-grid span.col { background: #b9c5ff; }
+.area-grid span.row { background: #ffd29c; }
+.area-grid span.col.row { background: #2bb673; }
+
 /* practice */
 .g6-play .question.g6q {
   display: block;
@@ -270,8 +284,9 @@
 
 @media (max-width: 600px) {
   .chapter, .point { padding: 12px 12px 16px; border-radius: 22px; }
-  .chapter-tabs { gap: 5px; }
-  .chapter-tab, .carousel-arrow { min-width: 40px; height: 44px; padding: 0 8px; font-size: 18px; border-radius: 12px; }
+  .chapter-tabs { gap: 4px; }
+  .carousel-arrow { display: none; } /* nine tabs fill the row; swiping still works */
+  .chapter-tab { min-width: 34px; height: 42px; padding: 0 5px; font-size: 15px; border-radius: 10px; }
   .slide { padding: 0 2px 12px; }
   /* lesson buttons: number and name on top, stars on a line below */
   .lesson-btn { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; padding: 8px 12px; }

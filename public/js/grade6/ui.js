@@ -78,6 +78,7 @@ export function createGrade6({
     const [prev, next] = app.querySelectorAll('.carousel-arrow');
     prev.disabled = i === 0;
     next.disabled = i === CHAPTERS.length - 1;
+    app.querySelector('.chapter-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 
   // Called after every render: put the track on the remembered chapter and

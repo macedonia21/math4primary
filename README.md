@@ -64,6 +64,10 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | III. Integers (lessons 13–17) | Done |
 | IV. Plane shapes in real life (lessons 18–20) | Done |
 | V. Symmetry of shapes in nature (lessons 21–22) | Done |
+| VI. Fractions (lessons 23–27, volume 2) | Done |
+| VII. Decimals | Coming soon |
+| VIII. Basic geometric figures | Coming soon |
+| IX. Data and experimental probability | Coming soon |
 
 The chapter list is a carousel showing one chapter at a time: switch with the I–V tabs, the ◀ ▶ arrows, the ← → keys, or by swiping. Coming back from a lesson returns to its chapter.
 
@@ -176,6 +180,7 @@ public/
     chapter3Advanced.js  Chapter III challenge exercises
     chapter4.js       Chapter IV lessons and challenge (plane shapes, perimeter, area)
     chapter5.js       Chapter V lessons and challenge (symmetry)
+    chapter6.js       Chapter VI lessons and challenge (fractions)
     shapes.js         SVG drawings of the shapes, their axes and centres
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice

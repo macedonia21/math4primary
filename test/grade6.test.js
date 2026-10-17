@@ -106,9 +106,9 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('all five chapters have their lessons (1–22)', () => {
-  assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 22 }, (_, i) => i + 1));
+test('volume 1 (lessons 1–22) and chapter VI (23–27) are complete; VII–IX are listed', () => {
+  assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']);
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 27 }, (_, i) => i + 1));
   assert.ok(ALL_LESSONS.every((l) => l.advanced.length >= 3), 'every lesson has challenge exercises');
 });
 

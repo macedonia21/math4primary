@@ -54,7 +54,7 @@ export const STRINGS = {
       grade6Desc: 'Toán 6: lý thuyết, ví dụ và bài tập',
     },
     g6: {
-      book: 'Toán 6 · Tập một',
+      book: 'Toán 6 · Tập một và tập hai',
       chapter: 'Chương',
       lesson: 'Bài',
       comingSoon: 'Sắp có',
@@ -118,7 +118,7 @@ export const STRINGS = {
       grade6Desc: 'Maths 6: key ideas, examples and practice',
     },
     g6: {
-      book: 'Maths 6 · Volume 1',
+      book: 'Maths 6 · Volumes 1 and 2',
       chapter: 'Chapter',
       lesson: 'Lesson',
       comingSoon: 'Coming soon',

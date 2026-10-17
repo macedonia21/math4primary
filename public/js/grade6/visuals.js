@@ -105,6 +105,12 @@ export function divisionColumn({ n, k }) {
     <div class="vx-divrow${fresh(i === k - 1)}"><span>${v}</span><span>${p}</span></div>`).join('')}</div>`;
 }
 
+// A bar cut into d equal parts with the first n shaded (tone a or b).
+export function fractionBar({ n, d, isNew = false, tone = 'a', label = '' }) {
+  const cells = Array.from({ length: d }, (_, i) => `<span class="fb-cell${i < n ? ` on ${tone}` : ''}"></span>`).join('');
+  return `<div class="fbar-row${fresh(isNew)}"><div class="fbar" style="--d:${d}">${cells}</div>${label ? `<span class="fbar-label">${label}</span>` : ''}</div>`;
+}
+
 // total objects, optionally sorted into boxes of `size` with the remainder apart.
 export function groups({ total, size, emoji, grouped, isNew = false }) {
   const item = `<span>${emoji}</span>`;
