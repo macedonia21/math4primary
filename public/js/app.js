@@ -3,6 +3,7 @@ import {
 } from './questions.js';
 import { STRINGS } from './i18n.js';
 import { load, save } from './storage.js';
+import { createGrade6 } from './grade6/ui.js';
 
 const ICONS = { numbers: '🔢', add: '➕', sub: '➖', mixed: '🎯', mul: '✖️' };
 const OPS = { '+': '+', '-': '−', '×': '×' };
@@ -10,7 +11,14 @@ const CONFETTI = ['🎉', '⭐', '✨', '🎈', '🌟'];
 
 const app = document.getElementById('app');
 const data = load();
-const state = { screen: 'home', activity: null, level: null, index: 0, correct: 0, question: null };
+const state = {
+  screen: 'home', activity: null, level: null, index: 0, correct: 0, question: null, steps: {}, typed: '', answered: false,
+};
+// Where the back button leads from each screen.
+const PARENT = {
+  primary: 'home', levels: 'primary', table: 'levels', play: 'levels', results: 'levels',
+  grade6: 'home', lesson: 'grade6', g6play: 'lesson', g6results: 'lesson',
+};
 let nextTimer = null;
 let audio = null;
 
@@ -31,9 +39,12 @@ function totalStars() {
 // ---------- screens ----------
 
 function topbar() {
+  const parent = PARENT[state.screen];
+  const back = parent && parent !== 'home'
+    ? `<button class="icon-btn" data-action="back" aria-label="${t().back}">⬅️</button>` : '';
   const left = state.screen === 'home'
     ? `<span class="logo">🌈 ${t().title}</span>`
-    : `<button class="icon-btn" data-action="home" aria-label="${t().home}">🏠</button>`;
+    : `<button class="icon-btn" data-action="home" aria-label="${t().home}">🏠</button>${back}`;
   return `
     <header class="topbar">
       ${left}
@@ -45,6 +56,23 @@ function topbar() {
 }
 
 function homeScreen() {
+  const stage = (action, icon, name, desc) => `
+    <button class="card stage ${action}-stage" data-action="${action}">
+      <span class="card-icon">${icon}</span>
+      <span class="card-name">${name}</span>
+      <span class="card-desc">${desc}</span>
+    </button>`;
+  return `
+    <main class="home">
+      <h1>${t().stages.choose}</h1>
+      <div class="cards stages">
+        ${stage('primary', '🎒', t().stages.primary, t().stages.primaryDesc)}
+        ${stage('grade6', '📐', t().stages.grade6, t().stages.grade6Desc)}
+      </div>
+    </main>`;
+}
+
+function primaryScreen() {
   const cards = ACTIVITIES.map((a) => `
     <button class="card ${a}" data-action="activity" data-activity="${a}">
       <span class="card-icon">${ICONS[a]}</span>
@@ -166,8 +194,18 @@ function resultsScreen() {
     </main>`;
 }
 
+const grade6 = createGrade6({
+  app, state, data, save, t, render, go, playSound, confetti, starRow, starsForScore, randomOf,
+});
+
 const SCREENS = {
-  home: homeScreen, levels: levelsScreen, table: tableScreen, play: playScreen, results: resultsScreen,
+  home: homeScreen,
+  primary: primaryScreen,
+  levels: levelsScreen,
+  table: tableScreen,
+  play: playScreen,
+  results: resultsScreen,
+  ...grade6.screens,
 };
 
 function render() {
@@ -247,6 +285,7 @@ function nextQuestion() {
 function go(screen) {
   clearTimeout(nextTimer);
   nextTimer = null;
+  grade6.stop();
   state.screen = screen;
   render();
 }
@@ -393,6 +432,8 @@ function confetti() {
 
 const ACTIONS = {
   home: () => go('home'),
+  back: () => go(PARENT[state.screen]),
+  primary: () => go('primary'),
   levels: () => go('levels'),
   activity: (el) => { state.activity = el.dataset.activity; go('levels'); },
   level: (el) => openLevel(Number(el.dataset.level)),
@@ -401,6 +442,7 @@ const ACTIONS = {
   'next-level': () => openLevel(state.level + 1),
   table: () => go('table'),
   play: () => startRound(state.level),
+  ...grade6.actions,
   mute: () => { data.muted = !data.muted; save(data); render(); },
   lang: () => { data.lang = data.lang === 'vi' ? 'en' : 'vi'; save(data); render(); },
 };
@@ -409,8 +451,10 @@ app.addEventListener('click', (event) => {
   const el = event.target.closest('[data-action]');
   if (!el || el.disabled) return;
   // Re-rendering mid-answer would wipe the feedback, so wait for the next question.
-  if (nextTimer && (el.dataset.action === 'mute' || el.dataset.action === 'lang')) return;
+  if ((nextTimer || grade6.busy()) && (el.dataset.action === 'mute' || el.dataset.action === 'lang')) return;
   ACTIONS[el.dataset.action](el);
 });
+
+document.addEventListener('keydown', grade6.onKey);
 
 render();

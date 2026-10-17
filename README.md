@@ -1,10 +1,13 @@
 # Vui Học Toán · Math Fun
 
-A colourful math practice website for primary school children, in Vietnamese and English.
+A colourful math learning website in Vietnamese and English, with two sections:
+
+- **Tiểu học (Primary school):** counting, addition, subtraction and times tables, as quick game rounds.
+- **Lớp 6 (Grade 6):** lessons following the Vietnamese Grade 6 maths curriculum, each with key ideas, step-by-step visual examples and practice.
 
 **Live site:** https://macedonia21.github.io/math4primary/
 
-## What's inside
+## Primary school
 
 | Activity | What children practise |
 |---|---|
@@ -49,6 +52,26 @@ The animation plays after both right and wrong answers, so it also shows why the
 A round has 10 questions. Children earn 1 star for 6 correct answers, 2 stars for 8 and 3 stars for 10. Earning at least 1 star unlocks the next level.
 
 Progress is saved in the browser (`localStorage`), so it survives closing the browser. Each browser, device and web address keeps its own progress, and private/incognito windows don't keep it.
+
+## Grade 6
+
+Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curriculum (Toán 6, volume 1). All theory, examples and exercises are written for this site rather than copied from a textbook.
+
+| Chapter | Status |
+|---|---|
+| I. The set of natural numbers (lessons 1–7) | Done |
+| II. Divisibility in the natural numbers | Coming soon |
+| III. Integers | Coming soon |
+| IV. Plane shapes in real life | Coming soon |
+| V. Symmetry of shapes in nature | Coming soon |
+
+Each lesson page has:
+
+- **Key ideas** for each main point of the lesson, in short bullet points.
+- **A step-by-step example** for each point, drawn as a picture (number ray, set diagram, place-value table, dot grid, groups of objects, or lines of working). The **Next step** button reveals one step at a time with a gentle animation; ◀ goes back and ↺ starts again.
+- **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
+
+Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
 ## Run it on your computer
 
@@ -106,13 +129,20 @@ The site is plain HTML, CSS and JavaScript, so it also works on any static host 
 ```
 public/
   index.html          Page shell
-  css/style.css       All styling (colours, sizes, animations)
+  css/style.css       Styling for the home page and primary section
+  css/grade6.css      Styling for Grade 6 pages and illustrations
   js/app.js           Screens, game flow, sounds and confetti
-  js/questions.js     Question generators for every activity and level
-  js/i18n.js          Vietnamese and English text
+  js/questions.js     Question generators for the primary activities
+  js/i18n.js          Vietnamese and English interface text
   js/storage.js       Saving progress in localStorage
+  js/grade6/
+    index.js          Chapter list and practice rounds
+    chapter1.js       Chapter I lessons: theory, examples, exercises
+    visuals.js        Illustration building blocks for the examples
+    ui.js             Grade 6 screens: lesson list, lesson page, practice
+    util.js           Bilingual text, number formatting, question builders
 server.js             Local Express server for development
-test/                 Unit tests for the question rules
+test/                 Unit tests for the question and exercise rules
 ```
 
 To change wording, edit `public/js/i18n.js`. To change level rules, edit `public/js/questions.js` and run `npm test`.
