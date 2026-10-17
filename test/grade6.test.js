@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { CHAPTERS, ALL_LESSONS, makeLessonRound, questionKey } from '../public/js/grade6/index.js';
 import { toRoman } from '../public/js/grade6/chapter1.js';
+import { shapeSvg, SYMMETRY } from '../public/js/grade6/shapes.js';
 
 const RUNS = 300;
 const isBi = (x) => typeof x?.vi === 'string' && typeof x?.en === 'string' && x.vi && x.en;
@@ -105,9 +106,20 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('chapters I–III have all their lessons; IV and V are listed', () => {
+test('all five chapters have their lessons (1–22)', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 17 }, (_, i) => i + 1));
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 22 }, (_, i) => i + 1));
+  assert.ok(ALL_LESSONS.every((l) => l.advanced.length >= 3), 'every lesson has challenge exercises');
+});
+
+test('shape drawings show as many lines of symmetry as the shape really has', () => {
+  for (const [kind, { axes, centre }] of Object.entries(SYMMETRY)) {
+    const svg = shapeSvg(kind, { axes: true, centre: true });
+    const axisGroup = svg.match(/<g class="sh-axes">(.*?)<\/g>/s);
+    assert.equal(axisGroup ? (axisGroup[1].match(/<line/g) ?? []).length : 0, axes, kind);
+    assert.ok(svg.includes('sh-centre'), kind);
+    assert.equal(typeof centre, 'boolean');
+  }
 });
 
 test('chapter III integer answers agree with a direct evaluation', () => {

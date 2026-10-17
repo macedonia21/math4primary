@@ -200,6 +200,37 @@
 .ndiv { position: relative; display: inline-block; }
 .ndiv::after { content: ''; position: absolute; left: 50%; top: 50%; width: 0.85em; margin-left: -0.425em; border-top: 2px solid currentColor; transform: rotate(-60deg); }
 
+/* chapters IV–V: shapes */
+.shape { display: block; width: min(100%, 300px); height: auto; overflow: visible; }
+.shape.small { width: 96px; }
+.g6q .shape { width: min(70%, 220px); margin: 6px auto 0; }
+.choice .shape.small { width: clamp(80px, 15vh, 120px); margin: 0 auto; }
+.sh-body { fill: #e8ecff; stroke: var(--c); stroke-width: 3; stroke-linejoin: round; }
+.sh-edge { stroke: var(--c); stroke-width: 3; }
+.sh-arc { fill: none; stroke: #ff9f1c; stroke-width: 2.5; stroke-dasharray: 5 4; }
+.sh-dot { fill: #e53950; }
+.sh-text, .sh-labels text, .sh-centre text { font: 800 16px "Baloo 2", sans-serif; fill: var(--ink); text-anchor: middle; }
+.sh-text.accent, .sh-centre text { fill: #e53950; }
+.sh-ticks line { stroke: #e53950; stroke-width: 2.5; }
+.sh-right polyline { fill: none; stroke: #2bb673; stroke-width: 2.5; }
+.sh-diagonals line { stroke: #ff9f1c; stroke-width: 2.5; stroke-dasharray: 6 4; }
+.sh-axes line, .sh-line line, .sh-axis { stroke: #e53950; stroke-width: 2.5; stroke-dasharray: 8 5; }
+.sh-centre circle { fill: #e53950; }
+.sh-tri-a, .sh-tri-b { stroke: var(--white); stroke-width: 2; }
+.sh-tri-a { fill: rgba(61, 90, 254, 0.25); }
+.sh-tri-b { fill: rgba(255, 159, 28, 0.35); }
+.sh-cut { fill: rgba(255, 159, 28, 0.55); stroke: #b85c00; stroke-width: 2; stroke-linejoin: round; }
+.sh-dash { stroke: #b85c00; stroke-width: 2.5; stroke-dasharray: 5 4; }
+.sh-grid { stroke: var(--c); stroke-width: 1.2; opacity: 0.5; }
+.sh-walk { fill: none; stroke: #ff9f1c; stroke-width: 6; }
+
+.shape-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; width: 100%; }
+.shape-cell { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.shape-cell-name { font-size: 15px; font-weight: 800; line-height: 1.2; }
+.shape-cell-note { min-height: 1.3em; font-size: 15px; font-weight: 800; color: #e53950; }
+.letter { font-family: Arial, Helvetica, sans-serif; font-weight: 700; letter-spacing: 2px; }
+.choice .letter { font-size: 1.4em; }
+
 /* practice */
 .g6-play .question.g6q {
   display: block;

@@ -6,18 +6,22 @@ import { CHAPTER2 } from './chapter2.js';
 import { ADVANCED2 } from './chapter2Advanced.js';
 import { CHAPTER3 } from './chapter3.js';
 import { ADVANCED3 } from './chapter3Advanced.js';
+import { CHAPTER4, ADVANCED4 } from './chapter4.js';
+import { CHAPTER5, ADVANCED5 } from './chapter5.js';
 import { shuffle } from './util.js';
 
 export const CHAPTERS = [
   { number: 'I', title: { vi: 'Tập hợp các số tự nhiên', en: 'The set of natural numbers' }, lessons: CHAPTER1 },
   { number: 'II', title: { vi: 'Tính chia hết trong tập hợp các số tự nhiên', en: 'Divisibility in the natural numbers' }, lessons: CHAPTER2 },
   { number: 'III', title: { vi: 'Số nguyên', en: 'Integers' }, lessons: CHAPTER3 },
-  { number: 'IV', title: { vi: 'Một số hình phẳng trong thực tiễn', en: 'Plane shapes in real life' }, lessons: [] },
-  { number: 'V', title: { vi: 'Tính đối xứng của hình phẳng trong tự nhiên', en: 'Symmetry of shapes in nature' }, lessons: [] },
+  { number: 'IV', title: { vi: 'Một số hình phẳng trong thực tiễn', en: 'Plane shapes in real life' }, lessons: CHAPTER4 },
+  { number: 'V', title: { vi: 'Tính đối xứng của hình phẳng trong tự nhiên', en: 'Symmetry of shapes in nature' }, lessons: CHAPTER5 },
 ];
 
 // Each lesson gets its chapter and its advanced exercises (empty if none yet).
-const ALL_ADVANCED = { ...ADVANCED, ...ADVANCED2, ...ADVANCED3 };
+const ALL_ADVANCED = {
+  ...ADVANCED, ...ADVANCED2, ...ADVANCED3, ...ADVANCED4, ...ADVANCED5,
+};
 for (const chapter of CHAPTERS) {
   chapter.lessons = chapter.lessons.map((lesson) => ({ ...lesson, chapter, advanced: ALL_ADVANCED[lesson.id] ?? [] }));
 }

@@ -149,6 +149,16 @@ export function createGrade6({
   // on, like the other teaching animations: the reveal is part of the lesson.
   function animateNew(root) {
     root.querySelectorAll('.new').forEach((el, i) => {
+      // Geometry moves: fold over an axis, half-turn about a centre, slide.
+      const move = {
+        flip: [{ transform: 'scaleX(1)' }, { transform: 'scaleX(-1)' }],
+        turn: [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
+        slide: [{ transform: `translate(${el.dataset.dx}px, 0px)` }, { transform: 'translate(0px, 0px)' }],
+      }[el.dataset.anim];
+      if (move) {
+        el.animate(move, { duration: 1400, delay: 250, easing: 'ease-in-out', fill: 'backwards' });
+        return;
+      }
       const svg = el instanceof SVGElement;
       el.animate(
         svg ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(10px) scale(0.96)' }, { opacity: 1, transform: 'none' }],
