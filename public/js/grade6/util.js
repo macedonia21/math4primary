@@ -27,6 +27,7 @@ export const tr = (x, L) => (x && typeof x === 'object' && 'vi' in x ? x[L] : x)
 
 // Vietnamese textbooks group thousands with a space (12 345); English uses commas.
 export function fmt(n, L) {
+  if (n < 0) return `−${fmt(-n, L)}`; // a real minus sign, not a hyphen
   const s = String(n);
   if (Math.abs(n) < 1000) return s;
   return s.replace(/\B(?=(\d{3})+(?!\d))/g, L === 'vi' ? '\u00A0' : ',');
@@ -82,6 +83,15 @@ export function choice(text, correct, wrongs, explain) {
 export function input(text, answer, explain, check) {
   return { text, input: true, answer, explain, check };
 }
+
+// The same for an integer answer (Chapter III): the number pad gets a ± key.
+export function inputZ(text, answer, explain, check) {
+  return { ...input(text, answer, explain, check), signed: true };
+}
+
+// Integers in text: z(−3) → "−3"; par(−3) → "(−3)" for use inside expressions.
+export const z = (n) => (n < 0 ? `−${-n}` : `${n}`);
+export const par = (n) => (n < 0 ? `(−${-n})` : `${n}`);
 
 // Three wrong numeric answers close to the right one (never negative).
 export function nearNumbers(answer, spread = [1, 2, 10]) {

@@ -120,14 +120,23 @@ export function createGrade6({
 
   // ---------- practice ----------
 
+  // What the student has typed so far, e.g. "−1 250" or "?".
+  const typedText = () => `${state.negative ? '−' : ''}${state.typed ? fmt(Number(state.typed), L()) : '?'}`;
+  const typedValue = () => (state.negative ? -1 : 1) * Number(state.typed);
+
   function numpad() {
-    const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'];
-    const label = { del: '⌫', ok: '✓' };
+    // Integer questions (Chapter III) get a ± key and a wide check button.
+    const signed = state.question.signed;
+    const keys = signed
+      ? ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'sign', '0', 'del', 'ok']
+      : ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'];
+    const label = { del: '⌫', ok: '✓', sign: '±' };
+    const aria = { del: g6().erase, ok: g6().check, sign: g6().sign };
     return `
       <div class="numpad-wrap">
-        <div class="numpad-display" aria-live="polite">${state.typed ? fmt(Number(state.typed), L()) : '?'}</div>
+        <div class="numpad-display" aria-live="polite">${typedText()}</div>
         <div class="numpad">${keys.map((k) => `
-          <button class="numpad-key ${k === 'ok' ? 'ok' : ''}" data-action="g6-key" data-key="${k}" aria-label="${k === 'del' ? g6().erase : k === 'ok' ? g6().check : k}">${label[k] ?? k}</button>`).join('')}
+          <button class="numpad-key${k === 'ok' ? ' ok' : ''}${k === 'ok' && signed ? ' wide' : ''}" data-action="g6-key" data-key="${k}" aria-label="${aria[k] ?? k}">${label[k] ?? k}</button>`).join('')}
         </div>
       </div>`;
   }
@@ -155,7 +164,7 @@ export function createGrade6({
   function startPractice(mode) {
     const round = makeLessonRound(lesson(), ROUND, mode);
     Object.assign(state, {
-      screen: 'g6play', mode, index: 0, correct: 0, round, question: round[0], typed: '', answered: false,
+      screen: 'g6play', mode, index: 0, correct: 0, round, question: round[0], typed: '', negative: false, answered: false,
     });
     render();
   }
@@ -197,14 +206,21 @@ export function createGrade6({
     if (state.answered || !state.question?.input) return;
     if (k === 'ok') {
       if (!state.typed) return;
-      const isRight = Number(state.typed) === state.question.answer;
+      const isRight = typedValue() === state.question.answer;
       app.querySelector('.numpad-display').classList.add(isRight ? 'right' : 'wrong');
       settle(isRight);
       return;
     }
-    if (k === 'del') state.typed = state.typed.slice(0, -1);
-    else if (state.typed.length < 9) state.typed = state.typed === '0' ? k : state.typed + k;
-    app.querySelector('.numpad-display').textContent = state.typed ? fmt(Number(state.typed), L()) : '?';
+    if (k === 'sign') {
+      if (!state.question.signed) return;
+      state.negative = !state.negative;
+    } else if (k === 'del') {
+      if (state.typed) state.typed = state.typed.slice(0, -1);
+      else state.negative = false;
+    } else if (state.typed.length < 9) {
+      state.typed = state.typed === '0' ? k : state.typed + k;
+    }
+    app.querySelector('.numpad-display').textContent = typedText();
   }
 
   function next() {
@@ -212,7 +228,7 @@ export function createGrade6({
     timer = null;
     state.index++;
     if (state.index < ROUND) {
-      Object.assign(state, { question: state.round[state.index], typed: '', answered: false });
+      Object.assign(state, { question: state.round[state.index], typed: '', negative: false, answered: false });
     } else {
       const stars = starsForScore(state.correct);
       if (stars > starsFor(state.level, state.mode)) {
@@ -254,6 +270,7 @@ export function createGrade6({
     }
     if (/^[0-9]$/.test(event.key)) key(event.key);
     else if (event.key === 'Backspace') key('del');
+    else if (event.key === '-') key('sign');
     else if (event.key === 'Enter') key('ok');
   }
 

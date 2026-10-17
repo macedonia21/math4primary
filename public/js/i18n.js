@@ -75,6 +75,7 @@ export const STRINGS = {
       allLessons: 'Danh sách bài học',
       advanced: 'Nâng cao',
       tryAdvanced: 'Thử bài nâng cao',
+      sign: 'Đổi dấu',
     },
   },
   en: {
@@ -136,6 +137,7 @@ export const STRINGS = {
       allLessons: 'All lessons',
       advanced: 'Challenge',
       tryAdvanced: 'Try the challenge',
+      sign: 'Change sign',
     },
   },
 };

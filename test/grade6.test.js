@@ -34,7 +34,8 @@ test('every exercise is well formed: bilingual, answer present, no duplicate cho
         assert.ok(isBi(q.text), where);
         assert.ok(isBi(q.explain), `${where} (explain)`);
         if (q.input) {
-          assert.ok(Number.isInteger(q.answer) && q.answer >= 0, `${where} → ${q.answer}`);
+          // Negative answers only where the number pad offers a ± key.
+          assert.ok(Number.isInteger(q.answer) && (q.signed || q.answer >= 0), `${where} → ${q.answer}`);
         } else {
           assert.ok(q.choices.length >= 2, where);
           assert.ok(q.choices.includes(q.answer), where);
@@ -104,9 +105,42 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('chapters I and II have all their lessons; III–V are listed', () => {
+test('chapters I–III have all their lessons; IV and V are listed', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 17 }, (_, i) => i + 1));
+});
+
+test('chapter III integer answers agree with a direct evaluation', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  const toJs = (html) => html.replace(/<[^>]+>/g, '').replaceAll('−', '-').replaceAll('·', '*').replaceAll(':', '/')
+    .replaceAll('[', '(').replaceAll(']', ')');
+  // eslint-disable-next-line no-new-func
+  const evaluate = (html) => Function(`return ${toJs(html)}`)();
+  const exprOf = (q) => q.text.en.match(/<span class="eq">(.*)<\/span>/)[1];
+  for (let i = 0; i < 200; i++) {
+    for (const [id, k] of [['c3b14', 0], ['c3b14', 1], ['c3b14', 2], ['c3b14', 4], ['c3b16', 0], ['c3b16', 2], ['c3b16', 3], ['c3b17', 0]]) {
+      const q = lesson(id).exercises[k]();
+      assert.equal(evaluate(exprOf(q)), q.answer, `${id} #${k}: ${exprOf(q)}`);
+    }
+    let q = lesson('c3b15').exercises[2]();
+    assert.equal(evaluate(q.check.html), q.answer, q.check.html);
+    q = lesson('c3b15').advanced[2]();
+    assert.equal(evaluate(q.check.html), q.answer, q.check.html);
+    // Alternating sum 1 − 2 + 3 − … ± n, added up term by term.
+    q = lesson('c3b15').advanced[0]();
+    const n = Number(exprOf(q).match(/(\d+)$/)[1]);
+    let s = 0;
+    for (let t = 1; t <= n; t++) s += t % 2 ? t : -t;
+    assert.equal(q.answer, s, exprOf(q));
+    // Sum of all integers in a range.
+    q = lesson('c3b13').advanced[0]();
+    const [, lo, op1, op2, hi] = exprOf(q).match(/(−?\d+) (&lt;|≤) x (&lt;|≤) (−?\d+)/);
+    const from = Number(lo.replace('−', '-')) + (op1 === '&lt;' ? 1 : 0);
+    const to = Number(hi.replace('−', '-')) - (op2 === '&lt;' ? 1 : 0);
+    let total = 0;
+    for (let x = from; x <= to; x++) total += x;
+    assert.equal(q.answer, total, exprOf(q));
+  }
 });
 
 test('chapter II answers agree with brute-force counting', () => {

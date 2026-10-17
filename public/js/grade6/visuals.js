@@ -23,7 +23,7 @@ export function numberLine({ from, to, points = [], arcs = [], marks = [] }) {
   for (let n = from; n <= to; n++) {
     const bold = marks.includes(n);
     ticks.push(`<line x1="${x(n)}" y1="${y - 7}" x2="${x(n)}" y2="${y + 7}" class="vx-tick"/>
-      <text x="${x(n)}" y="${y + 30}" class="vx-num${bold ? ' bold' : ''}">${n}</text>`);
+      <text x="${x(n)}" y="${y + 30}" class="vx-num${bold ? ' bold' : ''}">${n < 0 ? `−${-n}` : n}</text>`);
   }
   const arcSvg = arcs.map(({ a, b, label, isNew }) => {
     const x1 = x(a);

@@ -61,7 +61,7 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 |---|---|
 | I. The set of natural numbers (lessons 1–7) | Done |
 | II. Divisibility in the natural numbers (lessons 8–12) | Done |
-| III. Integers | Coming soon |
+| III. Integers (lessons 13–17) | Done |
 | IV. Plane shapes in real life | Coming soon |
 | V. Symmetry of shapes in nature | Coming soon |
 
@@ -69,7 +69,7 @@ Each lesson page has:
 
 - **Key ideas** for each main point of the lesson, in short bullet points.
 - **A step-by-step example** for each point, drawn as a picture (number ray, set diagram, place-value table, dot grid, groups of objects, or lines of working). The **Next step** button reveals one step at a time with a gentle animation; ◀ goes back and ↺ starts again.
-- **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
+- **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard); in Chapter III the pad has a **±** key for negative answers (the keyboard's − key works too). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
 
 - **🚀 Challenge (Nâng cao): 10 harder questions**, a separate practice with its own stars and a purple style. It uses problem types common in Vietnamese Grade 6 enrichment material, with original wording and random numbers:
 
@@ -87,6 +87,11 @@ Each lesson page has:
   | 10. Primes | Two primes with an odd sum; number of divisors from the factorisation; consecutive primes from their product; prime or composite without a calculator |
   | 11. GCD | Largest divisor leaving given remainders; equal teams of boys and girls; largest square tiles; simplifying large fractions |
   | 12. LCM | Lining up students exactly or with a remainder; GCD · LCM = product; adding three fractions |
+  | 13. Integers | Sum of all integers in a range; largest/smallest negative numbers; moving along the number line; counting integers between negatives |
+  | 14. Add and subtract integers | Sums from −a to b; find x; submarine depths; lifespans in years BC |
+  | 15. Brackets | 1 − 2 + 3 − 4 + … ± n; find x with brackets; nested brackets; big numbers that cancel |
+  | 16. Multiply integers | Powers of negative numbers; find x in a product; comparing powers of negatives; longer expressions |
+  | 17. Divisors of integers | How many integers n make (n + c) divisible by n + 1, or (2x + c) by x + 1; products equal to 0; multiples between −a and b |
 
 Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
@@ -158,6 +163,8 @@ public/
     chapter1Advanced.js  Chapter I challenge (Nâng cao) exercises
     chapter2.js       Chapter II lessons (divisibility, primes, GCD, LCM)
     chapter2Advanced.js  Chapter II challenge exercises
+    chapter3.js       Chapter III lessons (integers)
+    chapter3Advanced.js  Chapter III challenge exercises
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice
     util.js           Bilingual text, number formatting, question builders
