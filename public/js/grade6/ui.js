@@ -192,22 +192,31 @@ export function createGrade6({
   // ---------- practice ----------
 
   // What the student has typed so far, e.g. "−1 250" or "?".
-  const typedText = () => `${state.negative ? '−' : ''}${state.typed ? fmt(Number(state.typed), L()) : '?'}`;
+  const typedText = () => {
+    if (!state.typed) return `${state.negative ? '−' : ''}?`;
+    const [whole, part] = state.typed.split('.');
+    const point = state.typed.includes('.') ? `${L() === 'vi' ? ',' : '.'}${part}` : '';
+    return `${state.negative ? '−' : ''}${fmt(Number(whole || 0), L())}${point}`;
+  };
   const typedValue = () => (state.negative ? -1 : 1) * Number(state.typed);
 
   function numpad() {
     // Integer questions (Chapter III) get a ± key and a wide check button.
-    const signed = state.question.signed;
-    const keys = signed
-      ? ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'sign', '0', 'del', 'ok']
-      : ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'];
-    const label = { del: '⌫', ok: '✓', sign: '±' };
-    const aria = { del: g6().erase, ok: g6().check, sign: g6().sign };
+    // Decimal questions (Chapter VII) add a decimal-point key.
+    const { signed, decimal } = state.question;
+    const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const keys = decimal && signed ? [...digits, 'sign', '0', 'dot', 'del', 'ok']
+      : decimal ? [...digits, 'dot', '0', 'del', 'ok']
+        : signed ? [...digits, 'sign', '0', 'del', 'ok']
+          : [...digits, 'del', '0', 'ok'];
+    const label = { del: '⌫', ok: '✓', sign: '±', dot: L() === 'vi' ? ',' : '.' };
+    const aria = { del: g6().erase, ok: g6().check, sign: g6().sign, dot: g6().point };
+    const wideOk = signed || decimal;
     return `
       <div class="numpad-wrap">
         <div class="numpad-display" aria-live="polite">${typedText()}</div>
         <div class="numpad">${keys.map((k) => `
-          <button class="numpad-key${k === 'ok' ? ' ok' : ''}${k === 'ok' && signed ? ' wide' : ''}" data-action="g6-key" data-key="${k}" aria-label="${aria[k] ?? k}">${label[k] ?? k}</button>`).join('')}
+          <button class="numpad-key${k === 'ok' ? ' ok' : ''}${k === 'ok' && wideOk ? (decimal && signed ? ' wide2' : ' wide') : ''}" data-action="g6-key" data-key="${k}" aria-label="${aria[k] ?? k}">${label[k] ?? k}</button>`).join('')}
         </div>
       </div>`;
   }
@@ -277,7 +286,7 @@ export function createGrade6({
     if (state.answered || !state.question?.input) return;
     if (k === 'ok') {
       if (!state.typed) return;
-      const isRight = typedValue() === state.question.answer;
+      const isRight = Math.abs(typedValue() - state.question.answer) < 1e-9;
       app.querySelector('.numpad-display').classList.add(isRight ? 'right' : 'wrong');
       settle(isRight);
       return;
@@ -285,10 +294,13 @@ export function createGrade6({
     if (k === 'sign') {
       if (!state.question.signed) return;
       state.negative = !state.negative;
+    } else if (k === 'dot') {
+      if (!state.question.decimal || state.typed.includes('.')) return;
+      state.typed = `${state.typed || '0'}.`;
     } else if (k === 'del') {
       if (state.typed) state.typed = state.typed.slice(0, -1);
       else state.negative = false;
-    } else if (state.typed.length < 9) {
+    } else if (state.typed.length < 10 && !/\.\d{4}$/.test(state.typed)) {
       state.typed = state.typed === '0' ? k : state.typed + k;
     }
     app.querySelector('.numpad-display').textContent = typedText();
@@ -346,6 +358,7 @@ export function createGrade6({
     if (/^[0-9]$/.test(event.key)) key(event.key);
     else if (event.key === 'Backspace') key('del');
     else if (event.key === '-') key('sign');
+    else if (event.key === ',' || event.key === '.') key('dot');
     else if (event.key === 'Enter') key('ok');
   }
 

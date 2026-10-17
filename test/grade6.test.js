@@ -36,7 +36,9 @@ test('every exercise is well formed: bilingual, answer present, no duplicate cho
         assert.ok(isBi(q.explain), `${where} (explain)`);
         if (q.input) {
           // Negative answers only where the number pad offers a ± key.
-          assert.ok(Number.isInteger(q.answer) && (q.signed || q.answer >= 0), `${where} → ${q.answer}`);
+          // Decimal answers have at most 4 decimal places (the pad allows 4).
+          const whole = q.decimal ? Math.abs(q.answer * 10000 - Math.round(q.answer * 10000)) < 1e-6 : Number.isInteger(q.answer);
+          assert.ok(whole && (q.signed || q.answer >= 0), `${where} → ${q.answer}`);
         } else {
           assert.ok(q.choices.length >= 2, where);
           assert.ok(q.choices.includes(q.answer), where);
@@ -106,9 +108,9 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('volume 1 (lessons 1–22) and chapter VI (23–27) are complete; VII–IX are listed', () => {
+test('volume 1 (lessons 1–22) and chapters VI–VII (23–31) are complete; VIII–IX are listed', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 27 }, (_, i) => i + 1));
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 31 }, (_, i) => i + 1));
   assert.ok(ALL_LESSONS.every((l) => l.advanced.length >= 3), 'every lesson has challenge exercises');
 });
 
@@ -180,5 +182,18 @@ test('chapter II answers agree with brute-force counting', () => {
     const [lo, hi, a, b, cc] = nums(q);
     const fits = [...Array(hi - lo + 1).keys()].map((k) => lo + k).filter((n) => n % a === 0 && n % b === 0 && n % cc === 0);
     assert.deepEqual(fits, [q.answer], q.text.en);
+  }
+});
+
+test('chapter VII decimal answers agree with a direct evaluation', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  // English text uses "." for decimals and "," for thousands.
+  const evaluate = (html) => Function(`return ${html.replace(/<[^>]+>/g, '').replaceAll(',', '').replaceAll('−', '-').replaceAll('·', '*').replaceAll(':', '/')}`)();
+  const exprOf = (q) => q.text.en.match(/<span class="eq">(.*)<\/span>/)[1];
+  for (let i = 0; i < 300; i++) {
+    for (const [id, k, adv] of [['c7b29', 0], ['c7b29', 1], ['c7b29', 2], ['c7b29', 2, true]]) {
+      const q = (adv ? lesson(id).advanced : lesson(id).exercises)[k]();
+      assert.ok(Math.abs(evaluate(exprOf(q)) - q.answer) < 1e-9, `${id} #${k}: ${exprOf(q)} → ${q.answer}`);
+    }
   }
 });

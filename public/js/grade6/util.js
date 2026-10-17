@@ -28,6 +28,11 @@ export const tr = (x, L) => (x && typeof x === 'object' && 'vi' in x ? x[L] : x)
 // Vietnamese textbooks group thousands with a space (12 345); English uses commas.
 export function fmt(n, L) {
   if (n < 0) return `−${fmt(-n, L)}`; // a real minus sign, not a hyphen
+  if (!Number.isInteger(n)) {
+    // Decimals: Vietnamese writes 3,5 and English 3.5.
+    const [whole, part] = String(Number(n.toFixed(6))).split('.');
+    return `${fmt(Number(whole), L)}${L === 'vi' ? ',' : '.'}${part}`;
+  }
   const s = String(n);
   if (Math.abs(n) < 1000) return s;
   return s.replace(/\B(?=(\d{3})+(?!\d))/g, L === 'vi' ? '\u00A0' : ',');
@@ -87,6 +92,12 @@ export function input(text, answer, explain, check) {
 // The same for an integer answer (Chapter III): the number pad gets a ± key.
 export function inputZ(text, answer, explain, check) {
   return { ...input(text, answer, explain, check), signed: true };
+}
+
+// A decimal answer (Chapter VII): the number pad gets a decimal-point key,
+// plus ± when the answer may be negative.
+export function inputD(text, answer, explain, signed = false) {
+  return { ...input(text, answer, explain), decimal: true, signed };
 }
 
 // Integers in text: z(−3) → "−3"; par(−3) → "(−3)" for use inside expressions.

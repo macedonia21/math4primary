@@ -65,7 +65,7 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | IV. Plane shapes in real life (lessons 18–20) | Done |
 | V. Symmetry of shapes in nature (lessons 21–22) | Done |
 | VI. Fractions (lessons 23–27, volume 2) | Done |
-| VII. Decimals | Coming soon |
+| VII. Decimals (lessons 28–31) | Done |
 | VIII. Basic geometric figures | Coming soon |
 | IX. Data and experimental probability | Coming soon |
 
@@ -75,7 +75,7 @@ Each lesson page has:
 
 - **Key ideas** for each main point of the lesson, in short bullet points.
 - **A step-by-step example** for each point, drawn as a picture (number ray, set diagram, place-value table, dot grid, groups of objects, or lines of working). The **Next step** button reveals one step at a time with a gentle animation; ◀ goes back and ↺ starts again.
-- **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard); in Chapter III the pad has a **±** key for negative answers (the keyboard's − key works too). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
+- **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard); in Chapter III the pad has a **±** key for negative answers (the keyboard's − key works too), and in Chapter VII a decimal-point key (shown as "," in Vietnamese and "." in English; the keyboard's , and . keys work too). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
 
 - **🚀 Challenge (Nâng cao): 10 harder questions**, a separate practice with its own stars and a purple style. It uses problem types common in Vietnamese Grade 6 enrichment material, with original wording and random numbers:
 
@@ -181,6 +181,7 @@ public/
     chapter4.js       Chapter IV lessons and challenge (plane shapes, perimeter, area)
     chapter5.js       Chapter V lessons and challenge (symmetry)
     chapter6.js       Chapter VI lessons and challenge (fractions)
+    chapter7.js       Chapter VII lessons and challenge (decimals, rounding, percentages)
     shapes.js         SVG drawings of the shapes, their axes and centres
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice
