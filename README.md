@@ -71,6 +71,18 @@ Each lesson page has:
 - **A step-by-step example** for each point, drawn as a picture (number ray, set diagram, place-value table, dot grid, groups of objects, or lines of working). The **Next step** button reveals one step at a time with a gentle animation; ◀ goes back and ↺ starts again.
 - **Practice: 10 questions** generated fresh every time from the lesson's exercise types. Some are multiple choice; others are answered by typing a number on the on-screen number pad (or the keyboard). A wrong answer shows the correct one with a short explanation and a **Next question** button. Stars work the same way as in the primary section.
 
+- **🚀 Challenge (Nâng cao): 10 harder questions**, a separate practice with its own stars and a purple style. It uses problem types common in Vietnamese Grade 6 enrichment material, with original wording and random numbers:
+
+  | Lesson | Challenge question types |
+  |---|---|
+  | 1. Sets | Counting elements of evenly spaced sets; odd/even numbers in a range; two-digit numbers with a given digit sum; describing a set by a formula (x = 3k + 1) |
+  | 2. Writing numbers | Digits needed to number a book's pages; writing a digit on the right; how many numbers with different digits; smallest/largest number with different digits |
+  | 3. Order | Sums of consecutive (even) numbers; product of two consecutive numbers; counting three-digit numbers above/below a bound; ordering similar numbers |
+  | 4. Add and subtract | Sum of an arithmetic series; find x with two operations; sum-and-difference problems; age problems |
+  | 5. Multiply and divide | Common-factor shortcuts; dividend + divisor known; largest/smallest number with a given remainder |
+  | 6. Powers | Last digit of a power; comparing powers like 2³⁰ and 3²⁰; find x inside a power; rewriting 8ᵐ · 4ⁿ as a power of 2 |
+  | 7. Order of operations | Long expressions with ( ), [ ] and { }; find x inside an expression; where to put brackets to reach a value |
+
 Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
 ## Run it on your computer
@@ -138,6 +150,7 @@ public/
   js/grade6/
     index.js          Chapter list and practice rounds
     chapter1.js       Chapter I lessons: theory, examples, exercises
+    chapter1Advanced.js  Chapter I challenge (Nâng cao) exercises
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice
     util.js           Bilingual text, number formatting, question builders

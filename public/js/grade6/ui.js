@@ -12,7 +12,10 @@ export function createGrade6({
   let timer = null;
   const L = () => data.lang;
   const g6 = () => t().g6;
-  const starsFor = (id) => data.stars.g6?.[id] ?? 0;
+  // Basic and advanced practice keep separate stars.
+  const STAR_KEY = { basic: 'g6', advanced: 'g6adv' };
+  const starsFor = (id, mode = 'basic') => data.stars[STAR_KEY[mode]]?.[id] ?? 0;
+  const isAdvanced = () => state.mode === 'advanced';
   const lesson = () => findLesson(state.level);
 
   // ---------- chapter list ----------
@@ -25,6 +28,7 @@ export function createGrade6({
             <span class="lesson-num">${g6().lesson} ${l.number}</span>
             <span class="lesson-name">${tr(l.title, L())}</span>
             <span class="level-stars">${starRow(starsFor(l.id))}</span>
+            ${l.advanced.length ? `<span class="adv-stars" title="${g6().advanced}">🚀${starRow(starsFor(l.id, 'advanced'))}</span>` : ''}
           </button>`).join('')
         : `<p class="soon">🚧 ${g6().comingSoon}</p>`;
       return `
@@ -72,8 +76,15 @@ export function createGrade6({
         <h1>${tr(l.title, L())}</h1>
         ${points}
         <div class="practice-bar">
-          <span class="level-stars">${starRow(starsFor(l.id))}</span>
-          <button class="big-btn primary" data-action="g6-practice">✏️ ${g6().practice} · ${ROUND} ${g6().questions}</button>
+          <div class="practice-option">
+            <button class="big-btn primary" data-action="g6-practice" data-mode="basic">✏️ ${g6().practice} · ${ROUND} ${g6().questions}</button>
+            <span class="level-stars">${starRow(starsFor(l.id))}</span>
+          </div>
+          ${l.advanced.length ? `
+          <div class="practice-option">
+            <button class="big-btn adv-btn" data-action="g6-practice" data-mode="advanced">🚀 ${g6().advanced} · ${ROUND} ${g6().questions}</button>
+            <span class="level-stars">${starRow(starsFor(l.id, 'advanced'))}</span>
+          </div>` : ''}
         </div>
       </main>`;
   }
@@ -128,11 +139,11 @@ export function createGrade6({
         <button class="choice" data-action="g6-answer" data-index="${i}">${tr(c, L())}</button>`).join('')}
       </div>`;
     return `
-      <main class="play g6-play g6">
+      <main class="play g6-play g6${isAdvanced() ? ' adv' : ''}">
         <div class="progress" aria-label="${state.index + 1} / ${ROUND}">
           <div class="progress-bar" style="width:${(state.index / ROUND) * 100}%"></div>
         </div>
-        <p class="crumb">${g6().question} ${state.index + 1}/${ROUND}</p>
+        <p class="crumb">${isAdvanced() ? `🚀 ${g6().advanced} · ` : ''}${g6().question} ${state.index + 1}/${ROUND}</p>
         <div class="question g6q">${tr(q.text, L())}</div>
         ${answers}
         <p class="feedback" aria-live="polite"></p>
@@ -141,9 +152,11 @@ export function createGrade6({
       </main>`;
   }
 
-  function startPractice() {
-    const round = makeLessonRound(lesson(), ROUND);
-    Object.assign(state, { screen: 'g6play', index: 0, correct: 0, round, question: round[0], typed: '', answered: false });
+  function startPractice(mode) {
+    const round = makeLessonRound(lesson(), ROUND, mode);
+    Object.assign(state, {
+      screen: 'g6play', mode, index: 0, correct: 0, round, question: round[0], typed: '', answered: false,
+    });
     render();
   }
 
@@ -202,8 +215,9 @@ export function createGrade6({
       Object.assign(state, { question: state.round[state.index], typed: '', answered: false });
     } else {
       const stars = starsForScore(state.correct);
-      if (stars > starsFor(state.level)) {
-        data.stars.g6 = { ...data.stars.g6, [state.level]: stars };
+      if (stars > starsFor(state.level, state.mode)) {
+        const key = STAR_KEY[state.mode];
+        data.stars[key] = { ...data.stars[key], [state.level]: stars };
         save(data);
       }
       state.screen = 'g6results';
@@ -217,13 +231,14 @@ export function createGrade6({
     const after = nextLesson(state.level);
     const score = t().score.replace('{n}', state.correct).replace('{total}', ROUND);
     return `
-      <main class="results g6">
+      <main class="results g6${isAdvanced() ? ' adv' : ''}">
         <div class="result-stars">${starRow(stars)}</div>
         <h1>${t().resultTitles[stars]}</h1>
         <p class="score">${score}</p>
         <div class="result-actions">
+          ${stars > 0 && !isAdvanced() && lesson().advanced.length ? `<button class="big-btn adv-btn" data-action="g6-practice" data-mode="advanced">🚀 ${g6().tryAdvanced}</button>` : ''}
           ${stars > 0 && after ? `<button class="big-btn primary" data-action="g6-lesson" data-id="${after.id}">${g6().nextLesson} ➡️</button>` : ''}
-          <button class="big-btn" data-action="g6-practice">🔁 ${t().playAgain}</button>
+          <button class="big-btn" data-action="g6-practice" data-mode="${state.mode}">🔁 ${t().playAgain}</button>
           <button class="big-btn" data-action="g6-lesson" data-id="${state.level}">📖 ${g6().backToLesson}</button>
           <button class="big-btn" data-action="grade6">${g6().allLessons}</button>
         </div>
@@ -248,7 +263,7 @@ export function createGrade6({
       grade6: () => go('grade6'),
       'g6-lesson': (el) => openLesson(el.dataset.id),
       'g6-step': step,
-      'g6-practice': startPractice,
+      'g6-practice': (el) => startPractice(el.dataset.mode ?? 'basic'),
       'g6-answer': answerChoice,
       'g6-key': (el) => key(el.dataset.key),
       'g6-next': next,

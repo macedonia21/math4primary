@@ -1,6 +1,7 @@
 // Grade 6 (Toán 6, tập một): chapters, lessons and practice rounds.
 
 import { CHAPTER1 } from './chapter1.js';
+import { ADVANCED } from './chapter1Advanced.js';
 import { shuffle } from './util.js';
 
 export const CHAPTERS = [
@@ -11,7 +12,11 @@ export const CHAPTERS = [
   { number: 'V', title: { vi: 'Tính đối xứng của hình phẳng trong tự nhiên', en: 'Symmetry of shapes in nature' }, lessons: [] },
 ];
 
-export const ALL_LESSONS = CHAPTERS.flatMap((chapter) => chapter.lessons.map((lesson) => ({ ...lesson, chapter })));
+// Each lesson gets its chapter and its advanced exercises (empty if none yet).
+for (const chapter of CHAPTERS) {
+  chapter.lessons = chapter.lessons.map((lesson) => ({ ...lesson, chapter, advanced: ADVANCED[lesson.id] ?? [] }));
+}
+export const ALL_LESSONS = CHAPTERS.flatMap((chapter) => chapter.lessons);
 export const findLesson = (id) => ALL_LESSONS.find((lesson) => lesson.id === id);
 export const nextLesson = (id) => ALL_LESSONS[ALL_LESSONS.findIndex((lesson) => lesson.id === id) + 1] ?? null;
 
@@ -20,10 +25,11 @@ export const nextLesson = (id) => ALL_LESSONS[ALL_LESSONS.findIndex((lesson) => 
 export const questionKey = (q) => JSON.stringify([q.text.vi, q.answer, (q.choices ?? []).map((c) => JSON.stringify(c)).sort()]);
 
 // A practice round: every kind of exercise in the lesson comes up, in random
-// order, and no question is asked twice.
-export function makeLessonRound(lesson, size = 10) {
+// order, and no question is asked twice. mode 'advanced' uses the harder set.
+export function makeLessonRound(lesson, size = 10, mode = 'basic') {
+  const pool = mode === 'advanced' ? lesson.advanced : lesson.exercises;
   const kinds = [];
-  while (kinds.length < size) kinds.push(...shuffle(lesson.exercises));
+  while (kinds.length < size) kinds.push(...shuffle(pool));
   const seen = new Set();
   return shuffle(kinds.slice(0, size)).map((make) => {
     let q;

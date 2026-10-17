@@ -27,7 +27,7 @@ test('every lesson has bilingual theory and examples with the same steps in both
 
 test('every exercise is well formed: bilingual, answer present, no duplicate choices', () => {
   for (const lesson of ALL_LESSONS) {
-    lesson.exercises.forEach((make, k) => {
+    [...lesson.exercises, ...lesson.advanced].forEach((make, k) => {
       for (let i = 0; i < RUNS; i++) {
         const q = make();
         const where = `${lesson.id} exercise ${k + 1}: ${q.text?.vi}`;
@@ -49,11 +49,12 @@ test('every exercise is well formed: bilingual, answer present, no duplicate cho
 test('order-of-operations answers match a real evaluation of the expression', () => {
   const lesson = ALL_LESSONS.find((l) => l.id === 'c1b7');
   for (let i = 0; i < RUNS; i++) {
-    const q = lesson.exercises[0]();
+    const q = (i % 2 ? lesson.advanced : lesson.exercises)[0]();
     const js = q.check.html
       .replace(/<sup>(\d+)<\/sup>/g, '**$1')
       .replaceAll('·', '*').replaceAll(':', '/').replaceAll('−', '-')
-      .replaceAll('[', '(').replaceAll(']', ')');
+      .replaceAll('[', '(').replaceAll(']', ')')
+      .replaceAll('{', '(').replaceAll('}', ')');
     // eslint-disable-next-line no-new-func
     assert.equal(Function(`return ${js}`)(), q.answer, q.check.html);
   }
@@ -64,13 +65,42 @@ test('Roman numerals 1 to 30 are written correctly', () => {
     ['I', 'IV', 'V', 'IX', 'X', 'XIV', 'XIX', 'XXIV', 'XXIX', 'XXX']);
 });
 
-test('a lesson practice round has 10 different questions using every exercise kind', () => {
+test('basic and advanced practice rounds have 10 different questions', () => {
   for (const lesson of ALL_LESSONS) {
-    for (let i = 0; i < 20; i++) {
-      const round = makeLessonRound(lesson);
-      assert.equal(round.length, 10);
-      assert.equal(new Set(round.map(questionKey)).size, 10, lesson.id);
+    assert.ok(lesson.advanced.length >= 3, `${lesson.id} advanced kinds`);
+    for (const mode of ['basic', 'advanced']) {
+      for (let i = 0; i < 20; i++) {
+        const round = makeLessonRound(lesson, 10, mode);
+        assert.equal(round.length, 10);
+        assert.equal(new Set(round.map(questionKey)).size, 10, `${lesson.id} ${mode}`);
+      }
     }
+  }
+});
+
+test('advanced answers that can be checked by brute force are right', () => {
+  const find = (id) => ALL_LESSONS.find((l) => l.id === id).advanced;
+  // Page numbering: count digits directly.
+  for (let i = 0; i < 100; i++) {
+    const q = find('c1b2')[0]();
+    const n = Number(q.text.en.match(/has (\d+) pages/)[1]);
+    let digits = 0;
+    for (let p = 1; p <= n; p++) digits += String(p).length;
+    assert.equal(q.answer, digits);
+  }
+  // Last digit of a power: compute with BigInt.
+  for (let i = 0; i < 100; i++) {
+    const q = find('c1b6')[0]();
+    const [, a, n] = q.text.en.match(/(\d+)<sup>(\d+)<\/sup>/);
+    assert.equal(q.answer, Number(BigInt(a) ** BigInt(n) % 10n));
+  }
+  // Arithmetic series: add the terms one by one.
+  for (let i = 0; i < 100; i++) {
+    const q = find('c1b4')[0]();
+    const [a, second, , b] = q.text.en.match(/\d+/g).map(Number);
+    let sum = 0;
+    for (let v = a; v <= b; v += second - a) sum += v;
+    assert.equal(q.answer, sum);
   }
 });
 

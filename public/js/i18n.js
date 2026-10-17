@@ -73,6 +73,8 @@ export const STRINGS = {
       nextLesson: 'Bài tiếp theo',
       backToLesson: 'Xem lại bài học',
       allLessons: 'Danh sách bài học',
+      advanced: 'Nâng cao',
+      tryAdvanced: 'Thử bài nâng cao',
     },
   },
   en: {
@@ -132,6 +134,8 @@ export const STRINGS = {
       nextLesson: 'Next lesson',
       backToLesson: 'Back to the lesson',
       allLessons: 'All lessons',
+      advanced: 'Challenge',
+      tryAdvanced: 'Try the challenge',
     },
   },
 };

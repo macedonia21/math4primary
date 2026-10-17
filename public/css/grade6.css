@@ -71,9 +71,16 @@
 .step-btn:disabled { opacity: 0.4; cursor: default; }
 .step-btn:not(:disabled):active { transform: translateY(3px); box-shadow: none; }
 
-.practice-bar { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 520px; }
+.practice-bar { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 520px; }
+.practice-option { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; }
 .practice-bar .big-btn { width: 100%; }
-.practice-bar .level-stars { font-size: 36px; }
+.practice-bar .level-stars { font-size: 30px; }
+
+/* advanced ("Nâng cao") practice: purple */
+.g6.adv { --c: #8e24aa; --c-dark: #5e1572; --soft: #f6ecfb; }
+.big-btn.adv-btn { color: var(--white); background: #8e24aa; box-shadow: 0 8px 0 #5e1572; }
+.big-btn.adv-btn:active { box-shadow: 0 2px 0 #5e1572; }
+.adv-stars { flex: none; font-size: 18px; color: #8e24aa; white-space: nowrap; }
 
 /* illustrations */
 .vx-derive { display: flex; flex-direction: column; gap: 6px; font-size: clamp(20px, 3vw, 28px); font-weight: 800; }
