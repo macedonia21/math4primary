@@ -12,16 +12,16 @@ import { CHAPTER6, ADVANCED6 } from './chapter6.js';
 import { shuffle } from './util.js';
 
 export const CHAPTERS = [
-  { number: 'I', title: { vi: 'Tập hợp các số tự nhiên', en: 'The set of natural numbers' }, lessons: CHAPTER1 },
-  { number: 'II', title: { vi: 'Tính chia hết trong tập hợp các số tự nhiên', en: 'Divisibility in the natural numbers' }, lessons: CHAPTER2 },
-  { number: 'III', title: { vi: 'Số nguyên', en: 'Integers' }, lessons: CHAPTER3 },
-  { number: 'IV', title: { vi: 'Một số hình phẳng trong thực tiễn', en: 'Plane shapes in real life' }, lessons: CHAPTER4 },
-  { number: 'V', title: { vi: 'Tính đối xứng của hình phẳng trong tự nhiên', en: 'Symmetry of shapes in nature' }, lessons: CHAPTER5 },
+  { number: 'I', volume: 1, title: { vi: 'Tập hợp các số tự nhiên', en: 'The set of natural numbers' }, lessons: CHAPTER1 },
+  { number: 'II', volume: 1, title: { vi: 'Tính chia hết trong tập hợp các số tự nhiên', en: 'Divisibility in the natural numbers' }, lessons: CHAPTER2 },
+  { number: 'III', volume: 1, title: { vi: 'Số nguyên', en: 'Integers' }, lessons: CHAPTER3 },
+  { number: 'IV', volume: 1, title: { vi: 'Một số hình phẳng trong thực tiễn', en: 'Plane shapes in real life' }, lessons: CHAPTER4 },
+  { number: 'V', volume: 1, title: { vi: 'Tính đối xứng của hình phẳng trong tự nhiên', en: 'Symmetry of shapes in nature' }, lessons: CHAPTER5 },
   // Volume 2
-  { number: 'VI', title: { vi: 'Phân số', en: 'Fractions' }, lessons: CHAPTER6 },
-  { number: 'VII', title: { vi: 'Số thập phân', en: 'Decimals' }, lessons: [] },
-  { number: 'VIII', title: { vi: 'Những hình hình học cơ bản', en: 'Basic geometric figures' }, lessons: [] },
-  { number: 'IX', title: { vi: 'Dữ liệu và xác suất thực nghiệm', en: 'Data and experimental probability' }, lessons: [] },
+  { number: 'VI', volume: 2, title: { vi: 'Phân số', en: 'Fractions' }, lessons: CHAPTER6 },
+  { number: 'VII', volume: 2, title: { vi: 'Số thập phân', en: 'Decimals' }, lessons: [] },
+  { number: 'VIII', volume: 2, title: { vi: 'Những hình hình học cơ bản', en: 'Basic geometric figures' }, lessons: [] },
+  { number: 'IX', volume: 2, title: { vi: 'Dữ liệu và xác suất thực nghiệm', en: 'Data and experimental probability' }, lessons: [] },
 ];
 
 // Each lesson gets its chapter and its advanced exercises (empty if none yet).

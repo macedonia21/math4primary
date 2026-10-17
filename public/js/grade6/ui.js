@@ -36,14 +36,16 @@ export function createGrade6({
       return `
         <div class="slide">
           <section class="chapter">
-            <h2><span class="ch-num">${g6().chapter} ${chapter.number}</span> ${tr(chapter.title, L())}</h2>
+            <h2><span class="ch-num">${g6().chapter} ${chapter.number}</span> ${tr(chapter.title, L())} <span class="vol-badge vol${chapter.volume}">${g6().volume} ${chapter.volume}</span></h2>
             <div class="lesson-list">${lessons}</div>
           </section>
         </div>`;
     }).join('');
     const current = state.chapterIndex ?? 0;
+    // Volume 2 tabs are purple, with a divider where the volume starts.
     const tabs = CHAPTERS.map((chapter, i) => `
-      <button class="chapter-tab${i === current ? ' active' : ''}" data-action="g6-chapter" data-index="${i}" aria-label="${g6().chapter} ${chapter.number}">${chapter.number}</button>`).join('');
+      ${i > 0 && chapter.volume !== CHAPTERS[i - 1].volume ? '<span class="tab-divider" aria-hidden="true"></span>' : ''}
+      <button class="chapter-tab vol${chapter.volume}${i === current ? ' active' : ''}" data-action="g6-chapter" data-index="${i}" aria-label="${g6().chapter} ${chapter.number} · ${g6().volume} ${chapter.volume}">${chapter.number}</button>`).join('');
     return `
       <main class="g6">
         <h1>📐 ${t().stages.grade6}</h1>

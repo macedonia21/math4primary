@@ -57,6 +57,11 @@
   box-shadow: 0 4px 0 #b9c1ee;
 }
 .chapter-tab.active { color: var(--white); background: var(--c); box-shadow: 0 4px 0 var(--c-dark); }
+.chapter-tab.vol2 { color: #6a1b9a; box-shadow: 0 4px 0 #d9b8ea; }
+.chapter-tab.vol2.active { color: var(--white); background: #8e24aa; box-shadow: 0 4px 0 #5e1572; }
+.tab-divider { width: 3px; height: 34px; margin: 0 4px; background: rgba(255, 255, 255, 0.8); border-radius: 2px; }
+.vol-badge { display: inline-block; padding: 0 8px; font-size: 0.65em; vertical-align: middle; color: var(--white); background: var(--c); border-radius: 10px; }
+.vol-badge.vol2 { background: #8e24aa; }
 .carousel-arrow:disabled { opacity: 0.35; cursor: default; }
 .chapter-tab:active, .carousel-arrow:not(:disabled):active { transform: translateY(3px); box-shadow: none; }
 
@@ -286,7 +291,8 @@
   .chapter, .point { padding: 12px 12px 16px; border-radius: 22px; }
   .chapter-tabs { gap: 4px; }
   .carousel-arrow { display: none; } /* nine tabs fill the row; swiping still works */
-  .chapter-tab { min-width: 34px; height: 42px; padding: 0 5px; font-size: 15px; border-radius: 10px; }
+  .chapter-tab { min-width: 32px; height: 42px; padding: 0 4px; font-size: 15px; border-radius: 10px; }
+  .tab-divider { margin: 0 1px; height: 30px; }
   .slide { padding: 0 2px 12px; }
   /* lesson buttons: number and name on top, stars on a line below */
   .lesson-btn { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; padding: 8px 12px; }
