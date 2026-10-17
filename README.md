@@ -66,7 +66,7 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | V. Symmetry of shapes in nature (lessons 21–22) | Done |
 | VI. Fractions (lessons 23–27, volume 2) | Done |
 | VII. Decimals (lessons 28–31) | Done |
-| VIII. Basic geometric figures | Coming soon |
+| VIII. Basic geometric figures (lessons 32–37) | Done |
 | IX. Data and experimental probability | Coming soon |
 
 The chapter list is a carousel showing one chapter at a time: switch with the I–V tabs, the ◀ ▶ arrows, the ← → keys, or by swiping. Coming back from a lesson returns to its chapter.
@@ -103,8 +103,14 @@ Each lesson page has:
   | 20. Perimeter and area | L-shaped areas; garden with a path; missing height or diagonal; fence cost |
   | 21. Lines of symmetry | Regular n-sided shapes; letters with a line of symmetry in a phrase; adding up lines of symmetry |
   | 22. Centre of symmetry | Regular shapes with an even number of sides; letters with a centre in a phrase; shapes with only one kind of symmetry |
+  | 32. Points and lines | Intersection points of n lines; lines through n points when k are collinear; number of points from the number of lines; n lines with k parallel |
+  | 33. Rays | Ordering four points on a line; naming a set of points (ray, opposite ray, segment); rays and opposite rays from lines through one point |
+  | 34. Segments | Points on one ray or on opposite rays; measuring with a rope; segments among points with some collinear; sum-and-difference of two parts |
+  | 35. Midpoints | Midpoint of AB with A, B on one ray or on opposite rays; distance between midpoints of neighbouring segments; halving again and again |
+  | 36. Angles | Angles made by lines through one point (with or without straight angles); number of rays from the number of angles; rays inside an angle; a segment across an angle |
+  | 37. Measuring angles | Angle next to a straight angle; clock hands at half past; splitting a straight angle by ratio or difference; third angle of a triangle |
 
-Chapters IV and V draw every shape as SVG (`shapes.js`): equal-side ticks, right angles, diagonals, lines and centres of symmetry appear one step at a time, and some steps move — a triangle constructed with compasses, a parallelogram cut and rearranged into a rectangle, a trapezoid turned into a parallelogram, a butterfly folded along its axis, a parallelogram turned half a turn about its centre.
+Chapters IV and V draw every shape as SVG (`shapes.js`): equal-side ticks, right angles, diagonals, lines and centres of symmetry appear one step at a time, and some steps move — a triangle constructed with compasses, a parallelogram cut and rearranged into a rectangle, a trapezoid turned into a parallelogram, a butterfly folded along its axis, a parallelogram turned half a turn about its centre. Chapter VIII draws points, lines, rays, segments and angles the same way: a ray turns about its origin to open an angle, a paper strip folds to find a midpoint, and a protractor and ruler are read in examples and questions.
 
 Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
@@ -182,6 +188,7 @@ public/
     chapter5.js       Chapter V lessons and challenge (symmetry)
     chapter6.js       Chapter VI lessons and challenge (fractions)
     chapter7.js       Chapter VII lessons and challenge (decimals, rounding, percentages)
+    chapter8.js       Chapter VIII lessons and challenge (points, lines, rays, segments, angles)
     shapes.js         SVG drawings of the shapes, their axes and centres
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice

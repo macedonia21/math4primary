@@ -108,9 +108,9 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('volume 1 (lessons 1–22) and chapters VI–VII (23–31) are complete; VIII–IX are listed', () => {
+test('volume 1 (lessons 1–22) and chapters VI–VIII (23–37) are complete; IX is listed', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 31 }, (_, i) => i + 1));
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 37 }, (_, i) => i + 1));
   assert.ok(ALL_LESSONS.every((l) => l.advanced.length >= 3), 'every lesson has challenge exercises');
 });
 
@@ -194,6 +194,102 @@ test('chapter VII decimal answers agree with a direct evaluation', () => {
     for (const [id, k, adv] of [['c7b29', 0], ['c7b29', 1], ['c7b29', 2], ['c7b29', 2, true]]) {
       const q = (adv ? lesson(id).advanced : lesson(id).exercises)[k]();
       assert.ok(Math.abs(evaluate(exprOf(q)) - q.answer) < 1e-9, `${id} #${k}: ${exprOf(q)} → ${q.answer}`);
+    }
+  }
+});
+
+test('chapter VIII counting answers agree with real drawings and direct checks', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  // Exact line through two integer points, as a normalised key.
+  const gcd = (a, b) => (b === 0 ? Math.abs(a) : gcd(b, a % b));
+  const lineKey = ([x1, y1], [x2, y2]) => {
+    let [a, b, c] = [y2 - y1, x1 - x2, (y2 - y1) * x1 + (x1 - x2) * y1];
+    const g = gcd(gcd(a, b), c) || 1;
+    [a, b, c] = [a / g, b / g, c / g];
+    if (a < 0 || (a === 0 && b < 0)) [a, b, c] = [-a, -b, -c];
+    return `${a},${b},${c}`;
+  };
+  const rnd = (n) => Math.floor(Math.random() * n);
+  for (let i = 0; i < 40; i++) {
+    // Intersections of real lines y = s·x + t (s equal for the parallel ones).
+    for (const k of [0, 3]) {
+      const q = lesson('c8b32').advanced[k]();
+      const { lines, parallel } = q.check;
+      for (;;) {
+        const ls = Array.from({ length: lines }, (_, j) => [j < parallel ? 0 : j + 1, rnd(1000)]);
+        const pts = new Set();
+        for (let a = 0; a < lines; a++) {
+          for (let b = a + 1; b < lines; b++) {
+            const [s1, t1] = ls[a];
+            const [s2, t2] = ls[b];
+            if (s1 !== s2) pts.add(`${(t2 - t1) / (s1 - s2)},${(s1 * t2 - s2 * t1) / (s1 - s2)}`);
+          }
+        }
+        const pairs = lines * (lines - 1) / 2 - parallel * (parallel - 1) / 2;
+        if (pts.size !== pairs) continue; // three lines met by chance: draw again
+        assert.equal(q.answer, pts.size, q.text.en);
+        break;
+      }
+    }
+    // Lines through points: k on y = 0, the rest scattered, no other three in a line.
+    const q = lesson('c8b32').advanced[1]();
+    const { points, collinear } = q.check;
+    for (;;) {
+      const pts = [...Array.from({ length: collinear }, (_, j) => [j * 7 + rnd(5), 0]),
+        ...Array.from({ length: points - collinear }, () => [rnd(500), 1 + rnd(500)])];
+      const keys = new Map();
+      for (let a = 0; a < points; a++) {
+        for (let b = a + 1; b < points; b++) {
+          const key = lineKey(pts[a], pts[b]);
+          keys.set(key, (keys.get(key) ?? new Set()).add(a).add(b));
+        }
+      }
+      const extra = [...keys.values()].filter((set) => set.size > 2 && ![...set].every((j) => j < collinear));
+      if (extra.length || new Set(pts.map(String)).size < points) continue;
+      assert.equal(q.answer, keys.size, q.text.en);
+      break;
+    }
+    // Angles from m lines: count pairs of 2m rays, minus the opposite pairs if asked.
+    const a = lesson('c8b36').advanced[0]();
+    // Ray j points at j · 180° / m, so rays j and j + m are opposite.
+    const m = a.check.lines;
+    let count = 0;
+    for (let x = 0; x < 2 * m; x++) {
+      for (let y = x + 1; y < 2 * m; y++) if (a.check.withStraight || y - x !== m) count++;
+    }
+    assert.equal(a.answer, count, a.text.en);
+  }
+});
+
+test('chapter VIII rays, protractors and clocks are read correctly', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  const dir = (order, [p, q]) => Math.sign(order.indexOf(q) - order.indexOf(p));
+  const parse = (c) => c.en.match(/Ray (\w)(\w)$/).slice(1);
+  for (let i = 0; i < 300; i++) {
+    for (const k of [1, 2]) {
+      const q = lesson('c8b33').exercises[k]();
+      const { order, kind, ray } = q.check;
+      for (const c of q.choices) {
+        const r = parse(c);
+        const sameOrigin = r[0] === ray[0];
+        const fits = kind === 'opposite' ? sameOrigin && dir(order, r) === -dir(order, ray) : sameOrigin && dir(order, r) === dir(order, ray);
+        assert.equal(fits, c === q.answer, `${kind} of ${ray.join('')} in ${order.join('')}: ${c.en}`);
+      }
+    }
+    const b = lesson('c8b33').advanced[0]();
+    const { order, between: [x, z] } = b.check;
+    const lo = Math.min(order.indexOf(x), order.indexOf(z));
+    const hi = Math.max(order.indexOf(x), order.indexOf(z));
+    assert.ok(order.indexOf(b.answer) > lo && order.indexOf(b.answer) < hi, b.text.en);
+    // Protractor: the rays are drawn at a and b degrees.
+    const p = lesson('c8b37').exercises[1]();
+    assert.equal(p.answer, p.check.b - p.check.a);
+    assert.ok(p.answer > 0 && p.check.b <= 180);
+    // Clocks: hand positions in degrees from 12.
+    for (const c of [lesson('c8b37').exercises[2](), lesson('c8b37').advanced[1]()]) {
+      const { h, m } = c.check;
+      const diff = Math.abs((h % 12) * 30 + m / 2 - m * 6);
+      assert.equal(c.answer, Math.min(diff, 360 - diff), c.text.en);
     }
   }
 });

@@ -229,6 +229,23 @@
 .sh-grid { stroke: var(--c); stroke-width: 1.2; opacity: 0.5; }
 .sh-walk { fill: none; stroke: #ff9f1c; stroke-width: 6; }
 
+/* chapter VIII: points, lines, rays, angles */
+.shape.fig { width: min(100%, 320px); }
+.g6q .shape.fig { width: min(85%, 280px); }
+.g6q .shape.fig.wide { width: min(100%, 360px); }
+.sh-edge.b { stroke: #ff9f1c; }
+.sh-edge.c { stroke: #2bb673; }
+.sh-edge.thick { stroke-width: 7; stroke-linecap: round; }
+.sh-tick { stroke: #e53950; stroke-width: 2.5; }
+.sh-ang { fill: rgba(43, 182, 115, 0.22); stroke: #2bb673; stroke-width: 2.5; }
+.sh-ang.right { fill: none; }
+.sh-ring { fill: none; stroke: #e53950; stroke-width: 2.5; }
+.sh-small { font: 700 13px "Baloo 2", sans-serif; fill: #6b7699; text-anchor: end; }
+.sh-paper { fill: #fff6d8; stroke: #d9b85c; stroke-width: 1.5; }
+.sh-prot { fill: rgba(255, 228, 176, 0.55); stroke: #b85c00; stroke-width: 2; }
+.sh-prot-tick { stroke: #b85c00; stroke-width: 1.2; }
+.sh-prot-num { font: 700 9.5px "Baloo 2", sans-serif; fill: #8a4500; text-anchor: middle; dominant-baseline: middle; }
+
 .shape-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; width: 100%; }
 .shape-cell { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .shape-cell-name { font-size: 15px; font-weight: 800; line-height: 1.2; }
