@@ -13,7 +13,7 @@ Static math site (Vietnamese + English) served from `public/`, deployed to GitHu
 ## Grade 6 (Lớp 6) — how a chapter is built
 - One file per chapter: `public/js/grade6/chapterN.js` exporting `CHAPTERN` (lessons) and
   `ADVANCEDN` (challenge exercises keyed by lesson id), registered in `grade6/index.js`
-  (`CHAPTERS` has `volume: 1|2`). Chapters I–VIII are done; IX is listed, empty.
+  (`CHAPTERS` has `volume: 1|2`). All chapters I–IX (lessons 1–43) are done.
 - Lesson id `c<chapter>b<lesson>` (e.g. `c8b32`); lesson numbers continue the textbook (VIII = 32–37, IX = 38–43).
 - Each lesson: 2–3 `points` (bilingual `theory` bullets + an `example` whose `frames(L)` reveal
   one step at a time; new pieces get class `new`), about 4 basic `exercises`, 3–4 `advanced`.

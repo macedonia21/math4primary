@@ -108,9 +108,9 @@ test('advanced answers that can be checked by brute force are right', () => {
   }
 });
 
-test('volume 1 (lessons 1–22) and chapters VI–VIII (23–37) are complete; IX is listed', () => {
+test('both volumes (lessons 1–43, chapters I–IX) are complete', () => {
   assert.deepEqual(CHAPTERS.map((c) => c.number), ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']);
-  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 37 }, (_, i) => i + 1));
+  assert.deepEqual(ALL_LESSONS.map((l) => l.number), Array.from({ length: 43 }, (_, i) => i + 1));
   assert.ok(ALL_LESSONS.every((l) => l.advanced.length >= 3), 'every lesson has challenge exercises');
 });
 
@@ -291,5 +291,68 @@ test('chapter VIII rays, protractors and clocks are read correctly', () => {
       const diff = Math.abs((h % 12) * 30 + m / 2 - m * 6);
       assert.equal(c.answer, Math.min(diff, 360 - diff), c.text.en);
     }
+  }
+});
+
+test('chapter IX charts and pictograms show the values the answers use', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  // Read bar heights back from the SVG using the axis labels.
+  const readBars = (html) => {
+    const ticks = [...html.matchAll(/<text class="ch-tick" x="[\d.]+" y="([\d.]+)">(\d+)<\/text>/g)].map((m) => [Number(m[1]) - 4, Number(m[2])]);
+    const [y0, v0] = ticks[0];
+    const [y1, v1] = ticks.at(-1);
+    const bars = [...html.matchAll(/<rect class="ch-bar s(\d)" x="([\d.]+)" y="([\d.]+)" width="[\d.]+" height="([\d.]+)"\/>/g)]
+      .filter((m) => Number(m[3]) > 8) // skip the legend squares (drawn at y = 6)
+      .map((m) => ({ s: Number(m[1]), x: Number(m[2]), v: Math.round(v0 + ((y0 - Number(m[3])) / (y0 - y1)) * (v1 - v0)) }));
+    return [0, 1].map((s) => bars.filter((b) => b.s === s).sort((p, q) => p.x - q.x).map((b) => b.v));
+  };
+  for (let i = 0; i < 200; i++) {
+    let q = lesson('c9b40').exercises[0]();
+    assert.equal(readBars(q.text.en)[0][q.check.index], q.answer, q.text.en);
+    q = lesson('c9b40').exercises[3]();
+    assert.equal(readBars(q.text.en)[0].reduce((a, b) => a + b, 0), q.answer);
+    q = lesson('c9b41').exercises[0]();
+    assert.equal(readBars(q.text.en)[q.check.series][q.check.index], q.answer);
+    q = lesson('c9b41').exercises[2]();
+    assert.equal(readBars(q.text.en)[q.check.series].reduce((a, b) => a + b, 0), q.answer);
+    // Pictogram: whole icons plus half icons, times the key.
+    q = lesson('c9b39').exercises[0]();
+    const per = Number(q.text.en.match(/<p class="pg-key">\S+ = (\d+)/)[1]);
+    const row = q.text.en.match(/<b>([^<]+)<\/b>/)[1];
+    const icons = q.text.en.match(new RegExp(`<span class="pg-label">${row}</span><span class="pg-icons">(.*?)</span></div>`))[1];
+    const half = icons.includes('pg-half');
+    const whole = [...icons.replace(/<span class="pg-half">.*?<\/span>/, '')].filter((c) => /\p{Extended_Pictographic}/u.test(c)).length;
+    assert.equal(q.answer, (whole + (half ? 0.5 : 0)) * per, q.text.en);
+  }
+});
+
+test('chapter IX counts agree with counting the outcomes one by one', () => {
+  const lesson = (id) => ALL_LESSONS.find((l) => l.id === id);
+  for (let i = 0; i < 200; i++) {
+    let q = lesson('c9b38').exercises[3]();
+    const words = q.text.en.match(/answered: (.*)\. How many chose (\w+)/);
+    assert.equal(q.answer, words[1].split(', ').filter((w) => w.toLowerCase() === words[2]).length, q.text.en);
+    q = lesson('c9b42').exercises[2]();
+    let c = 0;
+    for (let x = 1; x <= q.check.n; x++) if (q.check.test(x)) c++;
+    assert.equal(q.answer, c);
+    q = lesson('c9b43').exercises[1]();
+    const rolls = q.text.en.match(/rolled \d+ times: ([\d, ]+)\./)[1].split(', ').map(Number);
+    assert.ok(Math.abs(q.answer - rolls.filter(q.check.test).length / rolls.length) < 1e-9);
+    q = lesson('c9b42').advanced[0]();
+    let pairs = 0;
+    for (let a = 1; a <= 6; a++) {
+      for (let b = 1; b <= 6; b++) {
+        const ok = { sum: a + b === q.check.s, evenProduct: (a * b) % 2 === 0, oddProduct: (a * b) % 2 === 1 }[q.check.kind];
+        if (ok) pairs++;
+      }
+    }
+    assert.equal(q.answer, pairs, q.text.en);
+    q = lesson('c9b42').advanced[2]();
+    c = 0;
+    for (let x = 1; x <= q.check.n; x++) if (x % q.check.a === 0 || x % q.check.b === 0) c++;
+    assert.equal(q.answer, c);
+    q = lesson('c9b38').advanced[0]();
+    assert.equal(q.answer, q.text.en.match(/marks: ([\d, ]+)\./)[1].split(', ').map(Number).filter((m) => m >= q.check.t).length);
   }
 });

@@ -67,7 +67,7 @@ Grade 6 follows the chapters and lessons of the Vietnamese Grade 6 maths curricu
 | VI. Fractions (lessons 23–27, volume 2) | Done |
 | VII. Decimals (lessons 28–31) | Done |
 | VIII. Basic geometric figures (lessons 32–37) | Done |
-| IX. Data and experimental probability | Coming soon |
+| IX. Data and experimental probability (lessons 38–43) | Done |
 
 The chapter list is a carousel showing one chapter at a time: switch with the I–V tabs, the ◀ ▶ arrows, the ← → keys, or by swiping. Coming back from a lesson returns to its chapter.
 
@@ -109,8 +109,14 @@ Each lesson page has:
   | 35. Midpoints | Midpoint of AB with A, B on one ray or on opposite rays; distance between midpoints of neighbouring segments; halving again and again |
   | 36. Angles | Angles made by lines through one point (with or without straight angles); number of rays from the number of angles; rays inside an angle; a segment across an angle |
   | 37. Measuring angles | Angle next to a straight angle; clock hands at half past; splitting a straight angle by ratio or difference; third angle of a triangle |
+  | 38. Collecting data | Counting marks above a level; the most frequent answer; a survey total that does not match the class |
+  | 39. Tables and pictograms | Pictogram with a missing key; a share as a percentage; totals with half icons |
+  | 40. Bar charts | Average of the bars; the biggest rise; a missing bar from the total |
+  | 41. Double bar charts | Groups where the second set is larger; the largest total; difference of the two totals |
+  | 42. Outcomes and events | Two dice (sum, even/odd product); two or three coins; cards divisible by a or b |
+  | 43. Experimental probability | Combining two experiments; times from the probability; the opposite event; tries from the probability |
 
-Chapters IV and V draw every shape as SVG (`shapes.js`): equal-side ticks, right angles, diagonals, lines and centres of symmetry appear one step at a time, and some steps move — a triangle constructed with compasses, a parallelogram cut and rearranged into a rectangle, a trapezoid turned into a parallelogram, a butterfly folded along its axis, a parallelogram turned half a turn about its centre. Chapter VIII draws points, lines, rays, segments and angles the same way: a ray turns about its origin to open an angle, a paper strip folds to find a midpoint, and a protractor and ruler are read in examples and questions.
+Chapters IV and V draw every shape as SVG (`shapes.js`): equal-side ticks, right angles, diagonals, lines and centres of symmetry appear one step at a time, and some steps move — a triangle constructed with compasses, a parallelogram cut and rearranged into a rectangle, a trapezoid turned into a parallelogram, a butterfly folded along its axis, a parallelogram turned half a turn about its centre. Chapter VIII draws points, lines, rays, segments and angles the same way: a ray turns about its origin to open an angle, a paper strip folds to find a midpoint, and a protractor and ruler are read in examples and questions. Chapter IX draws its tables, pictograms (with half icons), bar charts and double bar charts the same way, bar by bar.
 
 Lessons are in `public/js/grade6/`. Each chapter file lists its lessons with their theory, examples and exercise generators; `test/grade6.test.js` checks every exercise type hundreds of times (answers present, no duplicate choices, both languages filled in, order-of-operations answers recomputed independently).
 
@@ -189,6 +195,7 @@ public/
     chapter6.js       Chapter VI lessons and challenge (fractions)
     chapter7.js       Chapter VII lessons and challenge (decimals, rounding, percentages)
     chapter8.js       Chapter VIII lessons and challenge (points, lines, rays, segments, angles)
+    chapter9.js       Chapter IX lessons and challenge (data, pictograms, bar charts, probability)
     shapes.js         SVG drawings of the shapes, their axes and centres
     visuals.js        Illustration building blocks for the examples
     ui.js             Grade 6 screens: lesson list, lesson page, practice

@@ -246,6 +246,33 @@
 .sh-prot-tick { stroke: #b85c00; stroke-width: 1.2; }
 .sh-prot-num { font: 700 9.5px "Baloo 2", sans-serif; fill: #8a4500; text-anchor: middle; dominant-baseline: middle; }
 
+/* chapter IX: data, tables, pictograms, bar charts */
+.stat-table { margin: 6px auto; border-collapse: collapse; font-size: clamp(15px, 2.2vw, 20px); }
+.stat-table th, .stat-table td { padding: 3px 12px; text-align: center; border: 2px solid #c5ccf5; }
+.stat-table th { background: var(--soft); }
+.vx-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 520px; }
+.vx-pill { padding: 2px 10px; font-size: clamp(15px, 2.2vw, 19px); font-weight: 700; background: #e4e8f2; border-radius: 12px; }
+.vx-pill.on { color: var(--white); background: #2bb673; }
+.vx-pill.bad { color: var(--white); background: #e53950; }
+.vx-die { font-size: clamp(40px, 7vw, 56px); line-height: 1; color: #6b7699; }
+.vx-die.on { color: #2bb673; }
+.pictogram { display: flex; flex-direction: column; gap: 4px; margin: 6px auto; text-align: left; }
+.pg-row { display: flex; align-items: center; gap: 8px; }
+.pg-label { flex: none; width: 3.4em; font-size: clamp(14px, 2vw, 18px); font-weight: 800; }
+.pg-icons { font-size: clamp(18px, 2.6vw, 24px); line-height: 1.2; letter-spacing: 1px; }
+.pg-half { display: inline-block; width: 0.6em; overflow: hidden; vertical-align: bottom; }
+.pg-key { margin: 2px 0 0; font-size: clamp(14px, 2vw, 18px); font-weight: 700; color: #6b7699; }
+.chart { display: block; width: min(100%, 380px); height: auto; margin: 0 auto; }
+.g6q .chart { width: min(100%, 340px); }
+.ch-title { margin: 4px 0 0; font-size: clamp(14px, 2vw, 18px); font-weight: 800; text-align: center; }
+.ch-grid { stroke: #dfe3f5; stroke-width: 1; }
+.ch-axis { stroke: var(--ink); stroke-width: 2; }
+.ch-tick { font: 700 10px "Baloo 2", sans-serif; fill: #6b7699; text-anchor: end; }
+.ch-cat, .ch-val { font: 800 11px "Baloo 2", sans-serif; fill: var(--ink); text-anchor: middle; }
+.ch-leg { font: 700 11px "Baloo 2", sans-serif; fill: var(--ink); }
+.ch-bar.s0 { fill: #5b74ff; }
+.ch-bar.s1 { fill: #ff9f1c; }
+
 .shape-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; width: 100%; }
 .shape-cell { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .shape-cell-name { font-size: 15px; font-weight: 800; line-height: 1.2; }
